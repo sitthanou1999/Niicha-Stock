@@ -2,7 +2,7 @@
 <html lang="lo">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🚀 ລະບົບ Inventory Cloud Management</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -25,76 +25,87 @@
         }
 
         * { box-sizing: border-box; font-family: 'Noto Sans Lao', sans-serif; margin: 0; padding: 0; }
-        body { background-color: var(--bg-body); color: var(--text-main); padding: 30px 20px; display: flex; justify-content: center; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding: 15px; display: flex; justify-content: center; }
         
-        .container { max-width: 1050px; width: 100%; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.05); }
-        h1 { text-align: center; margin-bottom: 25px; color: var(--primary); font-weight: 700; font-size: 26px; }
-        h3 { font-weight: 600; color: #334155; font-size: 18px; margin-bottom: 5px; }
+        .container { max-width: 1050px; width: 100%; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+        h1 { text-align: center; margin-bottom: 20px; color: var(--primary); font-weight: 700; font-size: 22px; }
+        h3 { font-weight: 600; color: #334155; font-size: 16px; margin-bottom: 5px; }
 
-        /* ປຸ່ມເມນູຫຼັກ (Main Tabs) */
-        .nav-tabs { display: flex; gap: 12px; margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 12px; }
-        .nav-btn { flex: 1; padding: 14px; border: none; background: #f1f5f9; color: #64748b; font-weight: 600; border-radius: 10px; cursor: pointer; font-size: 14px; transition: all 0.2s ease; }
-        .nav-btn:hover { background: #e2e8f0; color: #334155; }
-        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(44, 62, 80, 0.2); }
+        /* ປຸ່ມເມນູຫຼັກ (ປັບໃຫ້ຮູດຊ້າຍຂວາໄດ້ໃນມືຖື) */
+        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+        .nav-tabs::-webkit-scrollbar { display: none; } /* ເຊື່ອງແຖບ Scroll */
+        .nav-btn { padding: 12px 16px; border: none; background: #f1f5f9; color: #64748b; font-weight: 600; border-radius: 10px; cursor: pointer; font-size: 13px; transition: all 0.2s ease; flex-shrink: 0; }
+        .nav-btn.active { background: var(--primary); color: white; }
         
-        /* ປຸ່ມເມນູຍ່ອຍ (Sub Tabs) */
-        .sub-tabs { display: flex; gap: 10px; margin: 20px 0; background: #f1f5f9; padding: 6px; border-radius: 12px; }
-        .sub-btn { flex: 1; padding: 10px 16px; border: none; background: transparent; color: #64748b; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s ease; }
-        .sub-btn:hover { color: #1e293b; background: rgba(255,255,255,0.5); }
+        /* ປຸ່ມເມນູຍ່ອຍ */
+        .sub-tabs { display: flex; gap: 8px; margin: 15px 0; background: #f1f5f9; padding: 6px; border-radius: 12px; overflow-x: auto; }
+        .sub-tabs::-webkit-scrollbar { display: none; }
+        .sub-btn { flex: 1; padding: 10px 12px; border: none; background: transparent; color: #64748b; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s ease; white-space: nowrap; text-align: center; min-width: 90px; }
         .sub-btn.active { background: white; color: var(--orange); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
 
         .page { display: none; }
         .page.active { display: block; }
         
         /* ຟອມເຂົ້າສູ່ລະບົບ */
-        .login-box { max-width: 400px; margin: 60px auto; padding: 30px; border-radius: 16px; background: white; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
-        .login-box input { width: 100%; padding: 12px; margin: 10px 0 15px 0; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; outline: none; transition: all 0.2s; }
-        .login-box input:focus { border-color: var(--success); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
-        .login-box button { width: 100%; padding: 12px; background: var(--success); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; transition: background 0.2s; }
-        .login-box button:hover { background: #059669; }
+        .login-box { max-width: 100%; width: 100%; margin: 40px auto; padding: 25px; border-radius: 16px; background: white; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
+        .login-box input { width: 100%; padding: 14px; margin: 10px 0 15px 0; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; outline: none; }
+        .login-box button { width: 100%; padding: 14px; background: var(--success); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
         
-        /* ຕາຕະລາງ (Table) */
-        .stock-table { width: 100%; border-collapse: collapse; margin-top: 10px; border-radius: 8px; overflow: hidden; }
-        .stock-table th, .stock-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 14px; }
-        .stock-table th { background-color: #f8fafc; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
-        .stock-table tbody tr { transition: background-color 0.2s; }
-        .stock-table tbody tr:hover { background-color: #f8fafc; }
+        /* ຕາຕະລາງ (ສຳລັບເປີດໃນ PC / Tablet ໃຫຍ່) */
+        .table-responsive { width: 100%; overflow-x: auto; }
+        .stock-table { width: 100%; border-collapse: collapse; margin-top: 10px; display: table; }
+        .stock-table th, .stock-table td { padding: 14px 12px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 14px; }
+        .stock-table th { background-color: #f8fafc; color: #64748b; font-weight: 600; font-size: 12px; }
         
+        /* ລະບົບກາດ (Card Layout) ສຳລັບມືຖື */
+        .mobile-cards { display: none; flex-direction: column; gap: 12px; margin-top: 10px; }
+        .card-item { background: white; border: 1px solid var(--border-color); padding: 16px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; transition: all 0.2s; position: relative; }
+        .card-header-flex { display: flex; justify-content: space-between; align-items: flex-start; }
+        .card-title { font-weight: 600; color: #1e293b; font-size: 15px; }
+        .card-body-flex { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px; border-radius: 8px; }
+        .card-footer-action { display: flex; justify-content: flex-end; gap: 8px; margin-top: 5px; }
+
         /* ສະຖານະແຍກຕາມສີ */
-        .low-stock { background-color: #fffbeb; }
-        .low-stock:hover { background-color: #fef3c7 !important; }
-        .out-of-stock { background-color: #fef2f2; }
-        .out-of-stock:hover { background-color: #fee2e2 !important; }
+        .low-stock { background-color: #fffbeb; border-left: 4px solid var(--warning); }
+        .out-of-stock { background-color: #fef2f2; border-left: 4px solid var(--danger); }
         
-        /* ປ້າຍສະຖານະ (Badges) */
-        .badge { padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+        /* ປ້າຍສະຖານະ */
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
         .badge-success { background-color: #d1fae5; color: #065f46; }
         .badge-warning { background-color: #fef3c7; color: #92400e; }
         .badge-danger { background-color: #fee2e2; color: #991b1b; }
         
-        /* ປຸ່ມທົ່ວໄປ (Buttons) */
-        .btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        /* ປຸ່ມຕ່າງໆ */
+        .btn { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-success { background: var(--success); color: white; }
-        .btn-success:hover { background: #059669; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
+        .btn-use { background: var(--orange); color: white; width: 100%; padding: 12px; font-size: 14px; }
+        .btn-add-stock { background: var(--blue); color: white; padding: 8px 14px; }
+        .btn-danger { background: #fff1f2; color: var(--danger); border: 1px solid #ffe4e6; padding: 8px 12px; }
         
-        .btn-use { background: var(--orange); color: white; padding: 10px 18px; font-size: 13px; box-shadow: 0 2px 4px rgba(249, 115, 22, 0.15); }
-        .btn-use:hover { background: var(--orange-hover); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); }
-        
-        .btn-add-stock { background: var(--blue); color: white; padding: 6px 12px; font-size: 13px; }
-        .btn-add-stock:hover { background: var(--blue-hover); box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3); }
-
-        .btn-danger { background: #fff1f2; color: var(--danger); border: 1px solid #ffe4e6; }
-        .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
-        
-        .user-status { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; color: #475569; border: 1px solid var(--border-color); }
-        .form-group { background: #f8fafc; padding: 20px; border-radius: 12px; margin-top: 30px; border: 1px solid var(--border-color); }
-        .form-group input, .form-group select { width: 100%; padding: 10px 12px; margin: 8px 0 16px 0; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-size: 14px; outline: none; }
-        .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+        .user-status { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 15px; border-radius: 12px; margin-bottom: 15px; font-size: 12px; color: #475569; border: 1px solid var(--border-color); }
+        .form-group { background: #f8fafc; padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--border-color); }
+        .form-group input, .form-group select { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-size: 14px; outline: none; }
         
         .action-flex { display: flex; align-items: center; gap: 8px; }
-        .use-input-box { width: 65px; padding: 8px; text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; font-size: 14px; outline: none; }
-        .inline-stock-input { width: 75px; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: 600; font-size: 14px; background: #f1f5f9; }
-        .add-stock-input { width: 65px; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: 600; font-size: 14px; }
+        .use-input-box { width: 75px; padding: 10px; text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; font-size: 15px; }
+        .add-stock-input { width: 75px; padding: 8px; border-radius: 8px; border: 1px solid #cbd5e1; text-align: center; font-weight: 600; font-size: 14px; }
+        .inline-stock-label { font-weight: 700; font-size: 16px; color: #1e293b; }
+
+        /* ========================================================
+           📱 RESPONSIVE CSS: ປ່ຽນຮູບແບບເມື່ອເປີດໃນມືຖື (ຈໍຕ່ຳກວ່າ 768px)
+           ======================================================== */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: 15px; border-radius: 12px; }
+            h1 { font-size: 18px; margin-bottom: 15px; }
+            .user-status { flex-direction: column; gap: 8px; text-align: center; }
+            
+            /* ເຊື່ອງຕາຕະລາງແບບເກົ່າ */
+            .table-responsive { display: none; }
+            
+            /* ສະແດງຜົນເປັນແບບກາດແທນ */
+            .mobile-cards { display: flex; }
+        }
     </style>
 </head>
 <body>
@@ -109,8 +120,8 @@
 <div id="mainApp" class="container" style="display: none;">
     <h1>📦 ລະບົບ Inventory Cloud</h1>
     <div class="user-status">
-        <span>👤 ຜູ້ໃຊ້: <strong style="color:#1e293b;"><span id="userDisplay">...</span></strong> (<span id="roleDisplay" style="color:var(--success);">...</span>)</span>
-        <span style="color:var(--danger); font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;" onclick="handleLogout()">Logout 🚪</span>
+        <span>👤 ຜູ້ໃຊ້: <strong><span id="userDisplay">...</span></strong> (<span id="roleDisplay" style="color:var(--success);">...</span>)</span>
+        <span style="color:var(--danger); font-weight:600; cursor:pointer;" onclick="handleLogout()">Logout 🚪</span>
     </div>
     
     <div class="nav-tabs">
@@ -120,8 +131,7 @@
     </div>
 
     <div id="page-use-page" class="page active">
-        <h3>📉 ບັນທຶກການນຳໃຊ້ວັດຖຸດິບ ແລະ ສິນຄ້າ</h3>
-        <p style="color: #64748b; font-size: 13px;">ເລືອກໝວດໝູ່ດ້ານລຸ່ມ ແລ້ວປ້ອນຈຳນວນເພື່ອຫັກສະຕັອກ</p>
+        <h3>📉 ບັນທຶກການນຳໃຊ້ວັດຖຸດິບ</h3>
         
         <div class="sub-tabs">
             <button class="sub-btn active" id="sub-btn-ນ້ຳ" onclick="filterUseCategory('ນ້ຳ')">💧 1. ໝວດນ້ຳ</button>
@@ -129,54 +139,63 @@
             <button class="sub-btn" id="sub-btn-ເຄັກ" onclick="filterUseCategory('ເຄັກ')">🍰 3. ໝວດເຄັກ</button>
         </div>
 
-        <table class="stock-table">
-            <thead>
-                <tr>
-                    <th>ชື່ວັດຖຸດິບ / ສິນຄ້າ</th>
-                    <th>ສະຕັອກເຫຼືອ</th>
-                    <th>ສະຖານະ</th>
-                    <th>ຈຳນວນທີ່ໃຊ້</th>
-                    <th>ການກະທຳ</th>
-                </tr>
-            </thead>
-            <tbody id="useTableBody"></tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="stock-table">
+                <thead>
+                    <tr>
+                        <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
+                        <th>ສະຕັອກເຫຼືອ</th>
+                        <th>ສະຖານະ</th>
+                        <th>ຈຳນວນທີ່ໃຊ້</th>
+                        <th>ການກະທຳ</th>
+                    </tr>
+                </thead>
+                <tbody id="useTableBodyPC"></tbody>
+            </table>
+        </div>
+
+        <div id="useCardsMobile" class="mobile-cards"></div>
     </div>
 
     <div id="page-stock" class="page">
-        <h3>📋 ລາຍການສະຕັອກສິນຄ້າທັງໝົດໃນ Cloud</h3>
-        <table class="stock-table">
-            <thead>
-                <tr>
-                    <th>ໝວດ</th>
-                    <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
-                    <th>ສະຕັອກຄົງເຫຼືອ</th>
-                    <th>⚡ ເພີ່ມສະຕັອກດ່ວນ</th>
-                    <th>ເກນເຕືອນ</th>
-                    <th>ຈັດການ</th>
-                </tr>
-            </thead>
-            <tbody id="stockTableBody"></tbody>
-        </table>
+        <h3>📋 ລາຍການສະຕັອກສິນຄ້າທັງໝົດ</h3>
+        
+        <div class="table-responsive">
+            <table class="stock-table">
+                <thead>
+                    <tr>
+                        <th>ໝວດ</th>
+                        <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
+                        <th>ສະຕັອກຄົງເຫຼືອ</th>
+                        <th>⚡ ເພີ່ມສະຕັອກດ່ວນ</th>
+                        <th>ເກນເຕືອນ</th>
+                        <th>ຈັດການ</th>
+                    </tr>
+                </thead>
+                <tbody id="stockTableBodyPC"></tbody>
+            </table>
+        </div>
+
+        <div id="stockCardsMobile" class="mobile-cards"></div>
         
         <div class="form-group" id="ownerForm">
-            <h3 style="margin-bottom:15px;">➕ ເພີ່ມສິນຄ້າ / ວັດຖຸດິບໃໝ່</h3>
-            <input type="text" id="prodName" placeholder="ຊື່ສິນຄ້າ ຫຼື ຊື່ວັດຖຸດິບ">
+            <h3 style="margin-bottom:12px;">➕ ເພີ່ມສິນຄ້າ / ວັດຖຸດິບໃໝ່</h3>
+            <input type="text" id="prodName" placeholder="ຊື່ສິນຄ້າ ຫຼື ວັດຖຸດິບ">
             <select id="prodCat">
                 <option value="ນ້ຳ">💧 ໝວດ: ນ້ຳ</option>
                 <option value="ອາຫານ">🍔 ໝວດ: ອາຫານ</option>
                 <option value="ເຄັກ">🍰 ໝວດ: ເຄັກ</option>
             </select>
             <input type="number" id="prodStock" placeholder="ສະຕັອກເລີ່ມຕົ້ນ">
-            <input type="text" id="prodUnit" placeholder="ຫົວໜ່ວຍ (ເຊັ່ນ: ແກ້ວ, ຕ່ອນ, ຖົງ, ກິໂລ)">
-            <input type="number" id="prodThreshold" placeholder="ເກນເຕືອນຕ່ຳ (ເຕືອນເມື່ອສິນຄ້າເຫຼືອຕ່ຳກວ່າ ຫຼື ເທົ່າກັບເທົ່ານີ້)">
-            <button class="btn btn-success" style="width:100%; padding:12px; font-size:14px;" onclick="addNewProduct()">✨ ບັນທຶກລົງລະບົບ Cloud</button>
+            <input type="text" id="prodUnit" placeholder="ຫົວໜ່ວຍ (ເຊັ່ນ: ແກ້ວ, ຕ່ອນ, ຖົງ)">
+            <input type="number" id="prodThreshold" placeholder="ເກນເຕືອນຕ່ຳ">
+            <button class="btn btn-success" style="width:100%; padding:14px; font-size:15px;" onclick="addNewProduct()">✨ ບັນທຶກລົງ Cloud</button>
         </div>
     </div>
 
     <div id="page-dash" class="page">
         <h3>📊 ສະຖິຕິສະຕັອກຄົງເຫຼືອ</h3><br>
-        <div style="width: 100%; height: 380px;"><canvas id="analyticsChart"></canvas></div>
+        <div style="width: 100%; height: 320px;"><canvas id="analyticsChart"></canvas></div>
     </div>
 </div>
 
@@ -201,8 +220,7 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    let localProducts = {}; let currentRole = "owner"; let myChart = null;
-    let currentUseCategory = "ນ້ຳ";
+    let localProducts = {}; let myChart = null; let currentUseCategory = "ນ້ຳ";
 
     function handleLogin() {
         const email = document.getElementById('loginEmail').value;
@@ -216,7 +234,6 @@
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('userDisplay').innerText = user.email;
-            currentRole = "owner";
             document.getElementById('roleDisplay').innerText = "MANAGER";
             listenToCloudData();
         } else {
@@ -247,8 +264,10 @@
         renderUsePage();
     }
 
+    // 1️⃣ Render ໜ້າກົດໃຊ້ (ຮອງຮັບທັງ PC ແລະ ມືຖື)
     function renderUsePage() {
-        const tbody = document.getElementById('useTableBody'); tbody.innerHTML = '';
+        const tbodyPC = document.getElementById('useTableBodyPC'); tbodyPC.innerHTML = '';
+        const divMobile = document.getElementById('useCardsMobile'); divMobile.innerHTML = '';
         let hasItem = false;
 
         for (let id in localProducts) {
@@ -258,15 +277,14 @@
 
             let statusBadge = ''; let rowClass = '';
             if (p.stock <= 0) {
-                statusBadge = '<span class="badge badge-danger">❌ ໝົດແລ້ວ</span>';
-                rowClass = 'out-of-stock';
+                statusBadge = '<span class="badge badge-danger">❌ ໝົດແລ້ວ</span>'; rowClass = 'out-of-stock';
             } else if (p.stock <= p.threshold) {
-                statusBadge = '<span class="badge badge-warning">⚠️ ເຫຼືອໜ້ອຍ</span>';
-                rowClass = 'low-stock';
+                statusBadge = '<span class="badge badge-warning">⚠️ ເຫຼືອໜ້ອຍ</span>'; rowClass = 'low-stock';
             } else {
                 statusBadge = '<span class="badge badge-success">✅ ປົກກະຕິ</span>';
             }
 
+            // --- ເວີຊັ່ນ PC (Table) ---
             let tr = document.createElement('tr'); if (rowClass) tr.className = rowClass;
             tr.innerHTML = `
                 <td><strong style="color:#334155;">${p.name}</strong></td>
@@ -279,80 +297,121 @@
                     </div>
                 </td>
                 <td>
-                    <button class="btn btn-use" onclick="executeUseItem('${id}')" ${p.stock <= 0 ? 'disabled style="background:#cbd5e1; color:#94a3b8; cursor:not-allowed; box-shadow:none;"' : ''}>📉 ຢືນຢັນການໃຊ້</button>
+                    <button class="btn btn-use" onclick="executeUseItem('${id}')" ${p.stock <= 0 ? 'disabled style="background:#cbd5e1; color:#94a3b8; cursor:not-allowed; box-shadow:none;"' : ''}>📉 ຢືນຢັນการໃຊ້</button>
                 </td>
             `;
-            tbody.appendChild(tr);
+            tbodyPC.appendChild(tr);
+
+            // --- ເວີຊັ່ນ ມືຖື (Cards) ---
+            let card = document.createElement('div'); card.className = `card-item ${rowClass}`;
+            card.innerHTML = `
+                <div class="card-header-flex">
+                    <div class="card-title">${p.name}</div>
+                    <div>${statusBadge}</div>
+                </div>
+                <div class="card-body-flex">
+                    <div>ສະຕັອກເຫຼືອ: <span class="inline-stock-label">${p.stock}</span> ${p.unit}</div>
+                    <div class="action-flex">
+                        <input type="number" id="use-qty-mob-${id}" value="1" min="1" class="use-input-box">
+                        <span style="color:#64748b; font-size:13px;">${p.unit}</span>
+                    </div>
+                </div>
+                <button class="btn btn-use" onclick="executeUseItemMobile('${id}')" ${p.stock <= 0 ? 'disabled style="background:#cbd5e1; color:#94a3b8; cursor:not-allowed;"' : ''}>📉 ຢືນຢັນການຫັກສະຕັອກ</button>
+            `;
+            divMobile.appendChild(card);
         }
 
         if(!hasItem) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px; font-size:14px;">📭 ບໍ່ມີລາຍການສິນຄ້າໃນໝວດນີ້</td></tr>`;
+            const noDataHtml = `<div style="text-align:center; color:#94a3b8; padding:30px; font-size:14px; width:100%;">📭 ບໍ່ມີລາຍການສິນຄ້າໃນໝວດນີ້</div>`;
+            tbodyPC.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px;">📭 ບໍ່ມີລາຍການສິນຄ້າ</td></tr>`;
+            divMobile.innerHTML = noDataHtml;
         }
     }
 
     function executeUseItem(id) {
         let currentStock = localProducts[id].stock;
-        let useInput = document.getElementById(`use-qty-${id}`);
-        let useQty = parseInt(useInput.value);
+        let useQty = parseInt(document.getElementById(`use-qty-${id}`).value);
+        saveUseData(id, currentStock, useQty, `use-qty-${id}`);
+    }
 
+    function executeUseItemMobile(id) {
+        let currentStock = localProducts[id].stock;
+        let useQty = parseInt(document.getElementById(`use-qty-mob-${id}`).value);
+        saveUseData(id, currentStock, useQty, `use-qty-mob-${id}`);
+    }
+
+    function saveUseData(id, currentStock, useQty, inputId) {
         if (isNaN(useQty) || useQty <= 0) return alert("ກະລຸນາປ້ອນຈຳນວນທີ່ຈະໃຊ້ໃຫ້ຖືກຕ້ອງ");
-        if (useQty > currentStock) return alert(`ວັດຖຸດິບບໍ່ພໍໃຫ້ຫັກ! ຕອນນີ້ມີເຫຼືອພຽງແຕ່ ${currentStock} ${localProducts[id].unit}`);
+        if (useQty > currentStock) return alert(`ວັດຖຸດິບບໍ່ພໍໃຫ້ຫັກ! ເຫຼືອພຽງແຕ່ ${currentStock}`);
 
         let newStock = currentStock - useQty;
         db.collection("products").doc(id).update({ stock: newStock }).then(() => {
-            useInput.value = "1";
+            document.getElementById(inputId).value = "1";
             if (newStock <= localProducts[id].threshold) { 
                 sendTelegramAlert(localProducts[id].name, newStock, localProducts[id].unit); 
             }
         });
     }
 
-    // 2️⃣ Render ໜ້າສະຕັອກສິນຄ້າ (ເພີ່ມປຸ່ມບວກສະຕັອກດ່ວນ)
+    // 2️⃣ Render ໜ້າສະຕັອກ (ຮອງຮັບທັງ PC ແລະ ມືຖື)
     function renderStockPage() {
-        const tbody = document.getElementById('stockTableBody'); tbody.innerHTML = '';
+        const tbodyPC = document.getElementById('stockTableBodyPC'); tbodyPC.innerHTML = '';
+        const divMobile = document.getElementById('stockCardsMobile'); divMobile.innerHTML = '';
+
         for (let id in localProducts) {
             let p = localProducts[id]; 
             let rowClass = '';
             if (p.stock <= 0) rowClass = 'out-of-stock';
             else if (p.stock <= p.threshold) rowClass = 'low-stock';
             
+            // --- ເວີຊັ່ນ PC (Table) ---
             let tr = document.createElement('tr'); if (rowClass) tr.className = rowClass;
             tr.innerHTML = `
-                <td><span style="font-size:12px; background:#e2e8f0; color:#475569; padding:4px 8px; border-radius:6px; font-weight:600;">${p.cat}</span></td>
+                <td><span style="font-size:11px; background:#e2e8f0; color:#475569; padding:4px 8px; border-radius:6px; font-weight:600;">${p.cat}</span></td>
                 <td><strong style="color:#334155;">${p.name}</strong></td>
-                <td>
-                    <div class="action-flex">
-                        <input type="number" value="${p.stock}" class="inline-stock-input" disabled> 
-                        <span style="color:#64748b; font-size:13px;">${p.unit}</span>
-                    </div>
-                </td>
+                <td><span class="inline-stock-label">${p.stock}</span> <span style="color:#64748b; font-size:13px;">${p.unit}</span></td>
                 <td>
                     <div class="action-flex">
                         <input type="number" id="add-qty-${id}" value="10" min="1" class="add-stock-input">
-                        <button class="btn btn-add-stock" onclick="executeAddStock('${id}')">➕ ເພີ່ມ</button>
+                        <button class="btn btn-add-stock" onclick="executeAddStock('${id}', 'add-qty-${id}')">➕ ເພີ່ມ</button>
                     </div>
                 </td>
                 <td><span style="color:#64748b; font-weight:600;">&le; ${p.threshold}</span></td>
-                <td>
-                    <button class="btn btn-danger" onclick="deleteProduct('${id}')">🗑️ ລຶບອອກ</button>
-                </td>
+                <td><button class="btn btn-danger" onclick="deleteProduct('${id}')">🗑️ ລຶບ</button></td>
             `;
-            tbody.appendChild(tr);
+            tbodyPC.appendChild(tr);
+
+            // --- ເວີຊັ່ນ ມືຖື (Cards) ---
+            let card = document.createElement('div'); card.className = `card-item ${rowClass}`;
+            card.innerHTML = `
+                <div class="card-header-flex">
+                    <div>
+                        <span style="font-size:11px; background:#e2e8f0; color:#475569; padding:3px 6px; border-radius:6px; font-weight:600; margin-right:5px;">${p.cat}</span>
+                        <strong style="color:#1e293b;">${p.name}</strong>
+                    </div>
+                    <button class="btn btn-danger" onclick="deleteProduct('${id}')" style="padding:4px 8px; font-size:11px;">🗑️ ລຶບ</button>
+                </div>
+                <div class="card-body-flex">
+                    <div>ຄົງເຫຼືອ: <span class="inline-stock-label">${p.stock}</span> ${p.unit} <br><small style="color:#64748b;">(ເກນເຕືອນ: &le;${p.threshold})</small></div>
+                    <div class="action-flex">
+                        <input type="number" id="add-qty-mob-${id}" value="10" min="1" class="add-stock-input">
+                        <button class="btn btn-add-stock" onclick="executeAddStock('${id}', 'add-qty-mob-${id}')">➕ ເພີ່ມ</button>
+                    </div>
+                </div>
+            `;
+            divMobile.appendChild(card);
         }
     }
 
-    // ຟັງຊັນບວກສະຕັອກເພີ່ມເຂົ້າ Cloud ໂດຍອັດຕະໂນມັດ
-    function executeAddStock(id) {
+    function executeAddStock(id, inputId) {
         let currentStock = localProducts[id].stock;
-        let addInput = document.getElementById(`add-qty-${id}`);
-        let addQty = parseInt(addInput.value);
+        let addQty = parseInt(document.getElementById(inputId).value);
 
         if (isNaN(addQty) || addQty <= 0) return alert("ກະລຸນາປ້ອນຕົວເລກສະຕັອກທີ່ຈະເພີ່ມໃຫ້ຖືກຕ້ອງ");
 
         let newStock = currentStock + addQty;
         db.collection("products").doc(id).update({ stock: newStock }).then(() => {
-            addInput.value = "10"; // ຣີເຊັດເປັນເລກ 10 ຄືເກົ່າ
-            alert(`✨ ເພີ່ມສະຕັອກ ${localProducts[id].name} ສຳເລັດ! ຕອນນີ້ມີທັງໝົດ: ${newStock} ${localProducts[id].unit}`);
+            document.getElementById(inputId).value = "10";
         });
     }
 
@@ -362,14 +421,12 @@
         const threshold = parseInt(document.getElementById('prodThreshold').value);
         if(!name || isNaN(stock)) return alert("ກະລຸນາກອກຂໍ້ມູນໃຫ້ຄົບ");
         db.collection("products").add({ name: name, cat: cat, stock: stock, unit: unit, threshold: threshold }).then(() => {
-            document.getElementById('prodName').value = '';
-            document.getElementById('prodStock').value = '';
-            document.getElementById('prodUnit').value = '';
-            document.getElementById('prodThreshold').value = '';
+            document.getElementById('prodName').value = ''; document.getElementById('prodStock').value = '';
+            document.getElementById('prodUnit').value = ''; document.getElementById('prodThreshold').value = '';
         });
     }
     
-    function deleteProduct(id) { if(confirm("ຕ້ອງການລຶບສິນຄ້ານີ້ແທ້ບໍ່? ຂໍ້ມູນໃນ Cloud ຈະຫາຍໄປທັນທີ")) { db.collection("products").doc(id).delete(); } }
+    function deleteProduct(id) { if(confirm("ຕ້ອງການລຶບສິນຄ້ານີ້ແທ້ບໍ່?")) { db.collection("products").doc(id).delete(); } }
 
     function renderChart() {
         const ctx = document.getElementById('analyticsChart').getContext('2d'); let labels = []; let stockData = [];
