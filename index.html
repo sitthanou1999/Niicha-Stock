@@ -17,6 +17,8 @@
             --danger: #ef4444;
             --orange: #f97316;
             --orange-hover: #ea580c;
+            --blue: #3b82f6;
+            --blue-hover: #2563eb;
             --bg-body: #f8fafc;
             --text-main: #1e293b;
             --border-color: #e2e8f0;
@@ -74,8 +76,13 @@
         .btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-success { background: var(--success); color: white; }
         .btn-success:hover { background: #059669; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
+        
         .btn-use { background: var(--orange); color: white; padding: 10px 18px; font-size: 13px; box-shadow: 0 2px 4px rgba(249, 115, 22, 0.15); }
         .btn-use:hover { background: var(--orange-hover); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); }
+        
+        .btn-add-stock { background: var(--blue); color: white; padding: 6px 12px; font-size: 13px; }
+        .btn-add-stock:hover { background: var(--blue-hover); box-shadow: 0 3px 8px rgba(59, 130, 246, 0.3); }
+
         .btn-danger { background: #fff1f2; color: var(--danger); border: 1px solid #ffe4e6; }
         .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
         
@@ -86,8 +93,8 @@
         
         .action-flex { display: flex; align-items: center; gap: 8px; }
         .use-input-box { width: 65px; padding: 8px; text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; font-size: 14px; outline: none; }
-        .inline-stock-input { width: 75px; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: 600; font-size: 14px; }
-        .inline-stock-input:focus { border-color: var(--primary); background: #f8fafc; }
+        .inline-stock-input { width: 75px; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: 600; font-size: 14px; background: #f1f5f9; }
+        .add-stock-input { width: 65px; padding: 6px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: 600; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -125,7 +132,7 @@
         <table class="stock-table">
             <thead>
                 <tr>
-                    <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
+                    <th>ชື່ວັດຖຸດິບ / ສິນຄ້າ</th>
                     <th>ສະຕັອກເຫຼືອ</th>
                     <th>ສະຖານະ</th>
                     <th>ຈຳນວນທີ່ໃຊ້</th>
@@ -143,7 +150,8 @@
                 <tr>
                     <th>ໝວດ</th>
                     <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
-                    <th>ສະຕັອກຄົງເຫຼືອ (ພິມແກ້ໄຂໄດ້)</th>
+                    <th>ສະຕັອກຄົງເຫຼືອ</th>
+                    <th>⚡ ເພີ່ມສະຕັອກດ່ວນ</th>
                     <th>ເກນເຕືອນ</th>
                     <th>ຈັດການ</th>
                 </tr>
@@ -299,6 +307,7 @@
         });
     }
 
+    // 2️⃣ Render ໜ້າສະຕັອກສິນຄ້າ (ເພີ່ມປຸ່ມບວກສະຕັອກດ່ວນ)
     function renderStockPage() {
         const tbody = document.getElementById('stockTableBody'); tbody.innerHTML = '';
         for (let id in localProducts) {
@@ -313,8 +322,14 @@
                 <td><strong style="color:#334155;">${p.name}</strong></td>
                 <td>
                     <div class="action-flex">
-                        <input type="number" value="${p.stock}" class="inline-stock-input" onchange="updateStockInline('${id}', this.value)"> 
+                        <input type="number" value="${p.stock}" class="inline-stock-input" disabled> 
                         <span style="color:#64748b; font-size:13px;">${p.unit}</span>
+                    </div>
+                </td>
+                <td>
+                    <div class="action-flex">
+                        <input type="number" id="add-qty-${id}" value="10" min="1" class="add-stock-input">
+                        <button class="btn btn-add-stock" onclick="executeAddStock('${id}')">➕ ເພີ່ມ</button>
                     </div>
                 </td>
                 <td><span style="color:#64748b; font-weight:600;">&le; ${p.threshold}</span></td>
@@ -326,13 +341,18 @@
         }
     }
 
-    function updateStockInline(id, newStockValue) {
-        const stock = parseInt(newStockValue);
-        if(isNaN(stock) || stock < 0) return alert("ກະລຸນາປ້ອນຕົວເລກສະຕັອກໃຫ້ຖືກຕ້ອງ");
-        db.collection("products").doc(id).update({ stock: stock }).then(() => {
-            if (stock <= localProducts[id].threshold) { 
-                sendTelegramAlert(localProducts[id].name, stock, localProducts[id].unit); 
-            }
+    // ຟັງຊັນບວກສະຕັອກເພີ່ມເຂົ້າ Cloud ໂດຍອັດຕະໂນມັດ
+    function executeAddStock(id) {
+        let currentStock = localProducts[id].stock;
+        let addInput = document.getElementById(`add-qty-${id}`);
+        let addQty = parseInt(addInput.value);
+
+        if (isNaN(addQty) || addQty <= 0) return alert("ກະລຸນາປ້ອນຕົວເລກສະຕັອກທີ່ຈະເພີ່ມໃຫ້ຖືກຕ້ອງ");
+
+        let newStock = currentStock + addQty;
+        db.collection("products").doc(id).update({ stock: newStock }).then(() => {
+            addInput.value = "10"; // ຣີເຊັດເປັນເລກ 10 ຄືເກົ່າ
+            alert(`✨ ເພີ່ມສະຕັອກ ${localProducts[id].name} ສຳເລັດ! ຕອນນີ້ມີທັງໝົດ: ${newStock} ${localProducts[id].unit}`);
         });
     }
 
