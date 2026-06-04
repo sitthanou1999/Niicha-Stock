@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🚀 ລະບົບ Inventory Cloud Management</title>
+    <title>🚀 ລະບົບ POS & Inventory Cloud - Niichá HomeCafe</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -16,9 +16,8 @@
             --warning: #f59e0b;
             --danger: #ef4444;
             --orange: #f97316;
-            --orange-hover: #ea580c;
             --blue: #3b82f6;
-            --blue-hover: #2563eb;
+            --purple: #8b5cf6;
             --bg-body: #f8fafc;
             --text-main: #1e293b;
             --border-color: #e2e8f0;
@@ -29,82 +28,80 @@
         
         .container { max-width: 1050px; width: 100%; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
         h1 { text-align: center; margin-bottom: 20px; color: var(--primary); font-weight: 700; font-size: 22px; }
-        h3 { font-weight: 600; color: #334155; font-size: 16px; margin-bottom: 5px; }
+        h3 { font-weight: 600; color: #334155; font-size: 16px; margin-bottom: 8px; }
 
-        /* ປຸ່ມເມນູຫຼັກ (ປັບໃຫ້ຮູດຊ້າຍຂວາໄດ້ໃນມືຖື) */
-        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-        .nav-tabs::-webkit-scrollbar { display: none; } /* ເຊື່ອງແຖບ Scroll */
-        .nav-btn { padding: 12px 16px; border: none; background: #f1f5f9; color: #64748b; font-weight: 600; border-radius: 10px; cursor: pointer; font-size: 13px; transition: all 0.2s ease; flex-shrink: 0; }
+        /* ປຸ່ມເມນູຫຼັກ */
+        .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; overflow-x: auto; white-space: nowrap; }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .nav-btn { padding: 12px 16px; border: none; background: #f1f5f9; color: #64748b; font-weight: 600; border-radius: 10px; cursor: pointer; font-size: 13px; transition: all 0.2s ease; }
         .nav-btn.active { background: var(--primary); color: white; }
         
         /* ປຸ່ມເມນູຍ່ອຍ */
-        .sub-tabs { display: flex; gap: 8px; margin: 15px 0; background: #f1f5f9; padding: 6px; border-radius: 12px; overflow-x: auto; }
+        .sub-tabs { display: flex; gap: 6px; margin: 15px 0; background: #f1f5f9; padding: 6px; border-radius: 12px; overflow-x: auto; }
         .sub-tabs::-webkit-scrollbar { display: none; }
-        .sub-btn { flex: 1; padding: 10px 12px; border: none; background: transparent; color: #64748b; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s ease; white-space: nowrap; text-align: center; min-width: 90px; }
+        .sub-btn { flex: 1; padding: 10px 10px; border: none; background: transparent; color: #64748b; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; white-space: nowrap; text-align: center; min-width: 110px; }
         .sub-btn.active { background: white; color: var(--orange); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
 
         .page { display: none; }
         .page.active { display: block; }
         
-        /* ຟອມເຂົ້າສູ່ລະບົບ */
-        .login-box { max-width: 100%; width: 100%; margin: 40px auto; padding: 25px; border-radius: 16px; background: white; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
+        /* ເຂົ້າສູ່ລະບົບ */
+        .login-box { max-width: 400px; width: 100%; margin: 40px auto; padding: 25px; border-radius: 16px; background: white; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
         .login-box input { width: 100%; padding: 14px; margin: 10px 0 15px 0; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; outline: none; }
         .login-box button { width: 100%; padding: 14px; background: var(--success); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
         
-        /* ຕາຕະລາງ (ສຳລັບເປີດໃນ PC / Tablet ໃຫຍ່) */
+        /* ✨ ກ່ອງຄົ້ນຫາສິນຄ້າ */
+        .search-container { position: relative; margin-bottom: 15px; }
+        .search-input { width: 100%; padding: 12px 16px 12px 40px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 14px; background-color: #f8fafc; outline: none; transition: all 0.2s; }
+        .search-input:focus { background-color: #fff; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 16px; }
+
+        /* ຕາຕະລາງ */
         .table-responsive { width: 100%; overflow-x: auto; }
-        .stock-table { width: 100%; border-collapse: collapse; margin-top: 10px; display: table; }
+        .stock-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         .stock-table th, .stock-table td { padding: 14px 12px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 14px; }
         .stock-table th { background-color: #f8fafc; color: #64748b; font-weight: 600; font-size: 12px; }
         
-        /* ລະບົບກາດ (Card Layout) ສຳລັບມືຖື */
+        /* ລະບົບກາດສຳລັບມືຖື */
         .mobile-cards { display: none; flex-direction: column; gap: 12px; margin-top: 10px; }
-        .card-item { background: white; border: 1px solid var(--border-color); padding: 16px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; transition: all 0.2s; position: relative; }
+        .card-item { background: white; border: 1px solid var(--border-color); padding: 16px; border-radius: 12px; display: flex; flex-direction: column; gap: 10px; }
         .card-header-flex { display: flex; justify-content: space-between; align-items: flex-start; }
         .card-title { font-weight: 600; color: #1e293b; font-size: 15px; }
         .card-body-flex { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 10px; border-radius: 8px; }
-        .card-footer-action { display: flex; justify-content: flex-end; gap: 8px; margin-top: 5px; }
 
-        /* ສະຖານະແຍກຕາມສີ */
         .low-stock { background-color: #fffbeb; border-left: 4px solid var(--warning); }
         .out-of-stock { background-color: #fef2f2; border-left: 4px solid var(--danger); }
         
-        /* ປ້າຍສະຖານະ */
         .badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
         .badge-success { background-color: #d1fae5; color: #065f46; }
         .badge-warning { background-color: #fef3c7; color: #92400e; }
         .badge-danger { background-color: #fee2e2; color: #991b1b; }
         
-        /* ປຸ່ມຕ່າງໆ */
-        .btn { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-success { background: var(--success); color: white; }
         .btn-use { background: var(--orange); color: white; width: 100%; padding: 12px; font-size: 14px; }
         .btn-add-stock { background: var(--blue); color: white; padding: 8px 14px; }
         .btn-danger { background: #fff1f2; color: var(--danger); border: 1px solid #ffe4e6; padding: 8px 12px; }
         
+        .btn-purple { background: var(--purple); color: white; width: 100%; padding: 16px; font-size: 15px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25); border: none; cursor: pointer; font-weight: bold; }
+        
         .user-status { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 15px; border-radius: 12px; margin-bottom: 15px; font-size: 12px; color: #475569; border: 1px solid var(--border-color); }
         .form-group { background: #f8fafc; padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--border-color); }
-        .form-group input, .form-group select { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-size: 14px; outline: none; }
+        .form-group input, .form-group select { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-size: 14px; }
         
         .action-flex { display: flex; align-items: center; gap: 8px; }
         .use-input-box { width: 75px; padding: 10px; text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; font-size: 15px; }
         .add-stock-input { width: 75px; padding: 8px; border-radius: 8px; border: 1px solid #cbd5e1; text-align: center; font-weight: 600; font-size: 14px; }
         .inline-stock-label { font-weight: 700; font-size: 16px; color: #1e293b; }
 
-        /* ========================================================
-           📱 RESPONSIVE CSS: ປ່ຽນຮູບແບບເມື່ອເປີດໃນມືຖື (ຈໍຕ່ຳກວ່າ 768px)
-           ======================================================== */
+        /* ຕົວເລືອກວັນທີສໍາລັບໜ້າປະຫວັດ */
+        .filter-container { background: #f1f5f9; padding: 15px; border-radius: 12px; display: flex; gap: 10px; align-items: center; margin-bottom: 15px; flex-wrap: wrap; }
+        .filter-container input[type="date"] { padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; font-weight: 600; }
+
         @media (max-width: 768px) {
-            body { padding: 10px; }
-            .container { padding: 15px; border-radius: 12px; }
-            h1 { font-size: 18px; margin-bottom: 15px; }
-            .user-status { flex-direction: column; gap: 8px; text-align: center; }
-            
-            /* ເຊື່ອງຕາຕະລາງແບບເກົ່າ */
             .table-responsive { display: none; }
-            
-            /* ສະແດງຜົນເປັນແບບກາດແທນ */
             .mobile-cards { display: flex; }
+            .mobile-log-cards { display: flex !important; flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
@@ -118,32 +115,43 @@
 </div>
 
 <div id="mainApp" class="container" style="display: none;">
-    <h1>📦 ລະບົບ Inventory Cloud</h1>
+    <h1>🏢 ລະບົບ POS & Inventory Cloud</h1>
     <div class="user-status">
         <span>👤 ຜູ້ໃຊ້: <strong><span id="userDisplay">...</span></strong> (<span id="roleDisplay" style="color:var(--success);">...</span>)</span>
         <span style="color:var(--danger); font-weight:600; cursor:pointer;" onclick="handleLogout()">Logout 🚪</span>
     </div>
     
+    <button class="btn-purple" onclick="seedGoogleSheetData()">🚀 ກົດປຸ່ມນີ້ບາດດຽו ເພື່ອອັບໂຫລດວັດຖຸດິບແຍກ 4 ໝວດໃໝ່ ຈາກ Google Sheet</button>
+
     <div class="nav-tabs">
-        <button class="nav-btn active" id="btn-use-page" onclick="switchPage('use-page')">📉 ກົດໃຊ້ວັດຖຸດິບ</button>
+        <button class="nav-btn active" id="btn-use-page" onclick="switchPage('use-page')">💻 ໜ້າຮ້ານ POS / ກົດໃຊ້</button>
         <button class="nav-btn" id="btn-stock" onclick="switchPage('stock')">📦 ສະຕັອກສິນຄ້າ (ເພີ່ມ/ແກ້ໄຂ)</button>
+        <button class="nav-btn" id="btn-logbook" onclick="switchPage('logbook')">📜 ປະຫວັດການໃຊ້ (Logbook)</button>
         <button class="nav-btn" id="btn-dash" onclick="switchPage('dash')">📊 Dashboard ສະຖິຕິ</button>
     </div>
 
+    <!-- Page 1: ໜ້າກົດໃຊ້ວັດຖຸດິບ -->
     <div id="page-use-page" class="page active">
-        <h3>📉 ບັນທຶກການນຳໃຊ້ວັດຖຸດິບ</h3>
+        <h3>📉 ບັນທຶກການນຳໃຊ້ວັດຖຸດິບ (Real-time)</h3>
         
         <div class="sub-tabs">
-            <button class="sub-btn active" id="sub-btn-ນ້ຳ" onclick="filterUseCategory('ນ້ຳ')">💧 1. ໝວດນ້ຳ</button>
-            <button class="sub-btn" id="sub-btn-ອາຫານ" onclick="filterUseCategory('ອາຫານ')">🍔 2. ໝວດອາຫານ</button>
-            <button class="sub-btn" id="sub-btn-ເຄັກ" onclick="filterUseCategory('ເຄັກ')">🍰 3. ໝວດເຄັກ</button>
+            <button class="sub-btn active" id="sub-btn-dry" onclick="filterUseCategory('dry')">🍂 1. ວັດຖຸດິບແຫ້ງ</button>
+            <button class="sub-btn" id="sub-btn-wet" onclick="filterUseCategory('wet')">🥛 2. ວັດຖຸດິບປຽກ</button>
+            <button class="sub-btn" id="sub-btn-fresh" onclick="filterUseCategory('fresh')">🍓 3. ປະເພດຂອງສົດ</button>
+            <button class="sub-btn" id="sub-btn-pkg" onclick="filterUseCategory('pkg')">📦 4. ອຸປະກອນ Packaging</button>
+        </div>
+
+        <!-- ✨ ເພີ່ມຊ່ອງ Search ໜ້າ POS -->
+        <div class="search-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchUseInput" class="search-input" placeholder="ພິມຊື່ອັດຖຸດິບທີ່ຕ້ອງການຄົ້ນຫາໃນໝວດນີ້..." oninput="renderUsePage()">
         </div>
 
         <div class="table-responsive">
             <table class="stock-table">
                 <thead>
                     <tr>
-                        <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
+                        <th>ชື່ວັດຖຸດິບ / ສິນຄ້າ</th>
                         <th>ສະຕັອກເຫຼືອ</th>
                         <th>ສະຖານະ</th>
                         <th>ຈຳນວນທີ່ໃຊ້</th>
@@ -153,18 +161,24 @@
                 <tbody id="useTableBodyPC"></tbody>
             </table>
         </div>
-
         <div id="useCardsMobile" class="mobile-cards"></div>
     </div>
 
+    <!-- Page 2: ໜ້າສະຕັອກສິນຄ້າ -->
     <div id="page-stock" class="page">
-        <h3>📋 ລາຍການສະຕັອກສິນຄ້າທັງໝົດ</h3>
+        <h3>📋 ລາຍການວັດຖຸດິບທັງໝົດໃນລະບົບ Cloud</h3>
         
+        <!-- ✨ ເພີ່ມຊ່ອງ Search ໜ້າສະຕັອກ (ຄົ້ນຫາໄດ້ທຸກໝວດພ້ອມກັນ) -->
+        <div class="search-container" style="margin-top: 15px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchStockInput" class="search-input" placeholder="ຄົ້ນຫາຊື່ວັດຖຸດິບທັງໝົດໃນສະຕັອກ..." oninput="renderStockPage()">
+        </div>
+
         <div class="table-responsive">
             <table class="stock-table">
                 <thead>
                     <tr>
-                        <th>ໝວດ</th>
+                        <th>👑 ໝວດ</th>
                         <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
                         <th>ສະຕັອກຄົງເຫຼືອ</th>
                         <th>⚡ ເພີ່ມສະຕັອກດ່ວນ</th>
@@ -175,24 +189,50 @@
                 <tbody id="stockTableBodyPC"></tbody>
             </table>
         </div>
-
         <div id="stockCardsMobile" class="mobile-cards"></div>
         
         <div class="form-group" id="ownerForm">
             <h3 style="margin-bottom:12px;">➕ ເພີ່ມສິນຄ້າ / ວັດຖຸດິບໃໝ່</h3>
             <input type="text" id="prodName" placeholder="ຊື່ສິນຄ້າ ຫຼື ວັດຖຸດິບ">
             <select id="prodCat">
-                <option value="ນ້ຳ">💧 ໝວດ: ນ້ຳ</option>
-                <option value="ອາຫານ">🍔 ໝວດ: ອາຫານ</option>
-                <option value="ເຄັກ">🍰 ໝວດ: ເຄັກ</option>
+                <option value="dry">🍂 ວັດຖຸດິບແຫ້ງ</option>
+                <option value="wet">🥛 ວັດຖຸດິບປຽກ</option>
+                <option value="fresh">🍓 ປະເພດຂອງສົດ</option>
+                <option value="pkg">📦 ອຸປະກອນ Packaging</option>
             </select>
             <input type="number" id="prodStock" placeholder="ສະຕັອກເລີ່ມຕົ້ນ">
-            <input type="text" id="prodUnit" placeholder="ຫົວໜ່ວຍ (ເຊັ່ນ: ແກ້ວ, ຕ່ອນ, ຖົງ)">
+            <input type="text" id="prodUnit" placeholder="ຫົວໜ່ວຍ (ເຊັ່ນ: g, ຫໍ່, ຕຸກ, ຖ້ວຍ)">
             <input type="number" id="prodThreshold" placeholder="ເກນເຕືອນຕ່ຳ">
-            <button class="btn btn-success" style="width:100%; padding:14px; font-size:15px;" onclick="addNewProduct()">✨ ບັນທຶກລົງ Cloud</button>
+            <button class="btn btn-success" style="width:100%; padding:14px; font-size:15px;" onclick="addNewProduct()">✨ ບັນທຶກລົງລະບົບ Cloud</button>
         </div>
     </div>
 
+    <!-- Page 3: ໜ້າປະຫວັດການໃຊ້ຄືນຫຼັງ (Logbook) -->
+    <div id="page-logbook" class="page">
+        <h3>📜 ປະຫວັດການນຳໃຊ້ວັດຖຸດິບຄືນຫຼັງ</h3>
+        
+        <div class="filter-container">
+            <label style="font-weight: 600; font-size: 14px; color: #475569;">📅 ເລືອກວັນທີຕ້ອງການເບິ່ງ:</label>
+            <input type="date" id="searchDate" onchange="fetchLogbook()">
+        </div>
+
+        <div class="table-responsive">
+            <table class="stock-table" style="margin-top:0;">
+                <thead>
+                    <tr style="background:#e2e8f0;">
+                        <th>🕒 ເວລາ</th>
+                        <th>👤 ຜູ້ບັນທຶກ</th>
+                        <th>📦 ວັດຖຸດິບ</th>
+                        <th>📉 ຈຳນວນທີ່ໃຊ້ໄປ</th>
+                    </tr>
+                </thead>
+                <tbody id="logTableBodyPC"></tbody>
+            </table>
+        </div>
+        <div id="logCardsMobile" class="mobile-log-cards" style="display:none;"></div>
+    </div>
+
+    <!-- Page 4: Dashboard -->
     <div id="page-dash" class="page">
         <h3>📊 ສະຖິຕິສະຕັອກຄົງເຫຼືອ</h3><br>
         <div style="width: 100%; height: 320px;"><canvas id="analyticsChart"></canvas></div>
@@ -200,9 +240,6 @@
 </div>
 
 <script>
-    // ========================================================
-    // ⚙️ ຂໍ້ມູນ Firebase Config ຂອງ Niicha Stock
-    // ========================================================
     const firebaseConfig = {
         apiKey: "AIzaSyAEVdN1IpNbbN43yHUtNHC2s9K435LXlnA",
         authDomain: "niicha-stock.firebaseapp.com",
@@ -213,14 +250,17 @@
         measurementId: "G-RWS5XPLL0D"
     };
     
-    const TELEGRAM_BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN";
-    const TELEGRAM_CHAT_ID = "YOUR_TELEGRAM_CHAT_ID_OR_GROUP_ID";
-
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    let localProducts = {}; let myChart = null; let currentUseCategory = "ນ້ຳ";
+    let localProducts = {}; let myChart = null; let currentUseCategory = "dry";
+    let currentUserEmail = "";
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('searchDate').value = today;
+    });
 
     function handleLogin() {
         const email = document.getElementById('loginEmail').value;
@@ -231,11 +271,13 @@
 
     auth.onAuthStateChanged(user => {
         if (user) {
+            currentUserEmail = user.email;
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('userDisplay').innerText = user.email;
             document.getElementById('roleDisplay').innerText = "MANAGER";
             listenToCloudData();
+            fetchLogbook();
         } else {
             document.getElementById('loginPage').style.display = 'block';
             document.getElementById('mainApp').style.display = 'none';
@@ -250,29 +292,35 @@
         });
     }
 
-    function sendTelegramAlert(productName, currentStock, unit) {
-        if(TELEGRAM_BOT_TOKEN.includes("YOUR_")) return;
-        const message = `⚠️ [Niicha Stock ຕ່ຳ]\nສິນຄ້າ: ${productName}\nເຫຼືອ: ${currentStock} ${unit}`;
-        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
-        fetch(url).catch(err => console.error(err));
-    }
-
     function filterUseCategory(catName) {
         currentUseCategory = catName;
         document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`sub-btn-${catName}`).classList.add('active');
+        document.getElementById('searchUseInput').value = ''; // Reset ຄຳຄົ້ນຫາເວລາປ່ຽນໝວດ
         renderUsePage();
     }
 
-    // 1️⃣ Render ໜ້າກົດໃຊ້ (ຮອງຮັບທັງ PC ແລະ ມືຖື)
+    function getCatLabel(cat) {
+        if(cat === 'dry') return '🍂 ແຫ້ງ';
+        if(cat === 'wet') return '🥛 ປຽກ';
+        if(cat === 'fresh') return '🍓 ຂອງສົດ';
+        if(cat === 'pkg') return '📦 PKG';
+        return cat;
+    }
+
+    // ✨ ປັບປຸງ: ເພີ່ມລະບົບກັ່ນຕອງຄົ້ນຫາໃນໜ້າກົດໃຊ້
     function renderUsePage() {
         const tbodyPC = document.getElementById('useTableBodyPC'); tbodyPC.innerHTML = '';
         const divMobile = document.getElementById('useCardsMobile'); divMobile.innerHTML = '';
+        const query = document.getElementById('searchUseInput').value.toLowerCase().trim();
         let hasItem = false;
 
         for (let id in localProducts) {
             let p = localProducts[id]; 
             if (p.cat !== currentUseCategory) continue;
+            
+            // ຖ້າມີການພິມຄົ້ນຫາ ແລ້ວຊື່ບໍ່ກົງ ໃຫ້ຂ້າມໄປ
+            if (query && !p.name.toLowerCase().includes(query)) continue;
             hasItem = true;
 
             let statusBadge = ''; let rowClass = '';
@@ -284,7 +332,6 @@
                 statusBadge = '<span class="badge badge-success">✅ ປົກກະຕິ</span>';
             }
 
-            // --- ເວີຊັ່ນ PC (Table) ---
             let tr = document.createElement('tr'); if (rowClass) tr.className = rowClass;
             tr.innerHTML = `
                 <td><strong style="color:#334155;">${p.name}</strong></td>
@@ -297,12 +344,11 @@
                     </div>
                 </td>
                 <td>
-                    <button class="btn btn-use" onclick="executeUseItem('${id}')" ${p.stock <= 0 ? 'disabled style="background:#cbd5e1; color:#94a3b8; cursor:not-allowed; box-shadow:none;"' : ''}>📉 ຢືນຢັນการໃຊ້</button>
+                    <button class="btn btn-use" onclick="executeUseItem('${id}')" ${p.stock <= 0 ? 'disabled style="background:#cbd5e1; color:#94a3b8; cursor:not-allowed; box-shadow:none;"' : ''}>📉 ຢືນຢັນການໃຊ້</button>
                 </td>
             `;
             tbodyPC.appendChild(tr);
 
-            // --- ເວີຊັ່ນ ມືຖື (Cards) ---
             let card = document.createElement('div'); card.className = `card-item ${rowClass}`;
             card.innerHTML = `
                 <div class="card-header-flex">
@@ -322,52 +368,113 @@
         }
 
         if(!hasItem) {
-            const noDataHtml = `<div style="text-align:center; color:#94a3b8; padding:30px; font-size:14px; width:100%;">📭 ບໍ່ມີລາຍການສິນຄ້າໃນໝວດນີ້</div>`;
-            tbodyPC.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px;">📭 ບໍ່ມີລາຍການສິນຄ້າ</td></tr>`;
-            divMobile.innerHTML = noDataHtml;
+            tbodyPC.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px;">📭 ບໍ່ມີລາຍການສິນຄ້າທີ່ກົງກັບຄຳຄົ້ນຫາ</td></tr>`;
+            divMobile.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:30px; font-size:14px; width:100%;">📭 ບໍ່ມີລາຍການສິນຄ້າທີ່ກົງກັບຄຳຄົ້ນຫາ</div>`;
         }
     }
 
     function executeUseItem(id) {
         let currentStock = localProducts[id].stock;
         let useQty = parseInt(document.getElementById(`use-qty-${id}`).value);
-        saveUseData(id, currentStock, useQty, `use-qty-${id}`);
+        saveUseData(id, localProducts[id].name, currentStock, useQty, `use-qty-${id}`, localProducts[id].unit);
     }
-
     function executeUseItemMobile(id) {
         let currentStock = localProducts[id].stock;
         let useQty = parseInt(document.getElementById(`use-qty-mob-${id}`).value);
-        saveUseData(id, currentStock, useQty, `use-qty-mob-${id}`);
+        saveUseData(id, localProducts[id].name, currentStock, useQty, `use-qty-mob-${id}`, localProducts[id].unit);
     }
 
-    function saveUseData(id, currentStock, useQty, inputId) {
-        if (isNaN(useQty) || useQty <= 0) return alert("ກະລຸນາປ້ອນຈຳນວນທີ່ຈະໃຊ້ໃຫ້ຖືກຕ້ອງ");
-        if (useQty > currentStock) return alert(`ວັດຖຸດິບບໍ່ພໍໃຫ້ຫັກ! ເຫຼືອພຽງແຕ່ ${currentStock}`);
-
+    function saveUseData(id, pName, currentStock, useQty, inputId, pUnit) {
+        if (isNaN(useQty) || useQty <= 0) return alert("ກະລຸນາປ້ອນຈຳນວນໃຫ້ຖືກຕ້ອງ");
+        if (useQty > currentStock) return alert(`ເຄື່ອງບໍ່ພໍໃຫ້ຫັກ! ເຫຼືອພຽງແຕ່ ${currentStock}`);
+        
         let newStock = currentStock - useQty;
+        const now = new Date();
+        
         db.collection("products").doc(id).update({ stock: newStock }).then(() => {
             document.getElementById(inputId).value = "1";
-            if (newStock <= localProducts[id].threshold) { 
-                sendTelegramAlert(localProducts[id].name, newStock, localProducts[id].unit); 
-            }
-        });
+            
+            const logData = {
+                prodName: pName,
+                qtyUsed: useQty,
+                unit: pUnit,
+                user: currentUserEmail,
+                dateStr: now.toISOString().split('T')[0],
+                timeStr: now.toLocaleTimeString('lo-LA', { hour: '2-digit', minute: '2-digit' }),
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            return db.collection("use_logs").add(logData);
+        }).then(() => {
+            fetchLogbook();
+        }).catch(err => alert("ເກີດຂໍ້ຜິດພາດ: " + err.message));
     }
 
-    // 2️⃣ Render ໜ້າສະຕັອກ (ຮອງຮັບທັງ PC ແລະ ມືຖື)
+    function fetchLogbook() {
+        const selectedDate = document.getElementById('searchDate').value;
+        if(!selectedDate) return;
+
+        db.collection("use_logs")
+          .where("dateStr", "==", selectedDate)
+          .orderBy("timestamp", "desc")
+          .get()
+          .then(snapshot => {
+              const tbody = document.getElementById('logTableBodyPC'); tbody.innerHTML = '';
+              const divMobile = document.getElementById('logCardsMobile'); divMobile.innerHTML = '';
+              
+              if(snapshot.empty) {
+                  tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; padding:30px;">📅 ບໍ່ມີປະຫວັດການໃຊ້ວັດຖຸດິບໃນວັນທີນີ້</td></tr>`;
+                  divMobile.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:20px; font-size:14px;">📅 ບໍ່ມີປະຫວັດການໃຊ້ວັດຖຸດິບໃນວັນທີນີ້</div>`;
+                  return;
+              }
+
+              snapshot.forEach(doc => {
+                  let log = doc.data();
+                  
+                  let tr = document.createElement('tr');
+                  tr.innerHTML = `
+                      <td style="color:#64748b; font-weight:600;">⏰ ${log.timeStr}</td>
+                      <td style="font-size:13px; color:#475569;">${log.user.split('@')[0]}</td>
+                      <td><strong style="color:#1e293b;">${log.prodName}</strong></td>
+                      <td><span style="color:var(--danger); font-weight:bold;">-${log.qtyUsed}</span> <small style="color:#64748b;">${log.unit}</small></td>
+                  `;
+                  tbody.appendChild(tr);
+
+                  let card = document.createElement('div');
+                  card.style = "background:white; border:1px solid var(--border-color); padding:12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;";
+                  card.innerHTML = `
+                      <div>
+                          <strong style="color:#1e293b; font-size:15px;">${log.prodName}</strong><br>
+                          <small style="color:#64748b;">🕒 ເວລາ: ${log.timeStr} | 👤 ໂດຍ: ${log.user.split('@')[0]}</small>
+                      </div>
+                      <div style="color:var(--danger); font-weight:bold; font-size:16px;">-${log.qtyUsed} ${log.unit}</div>
+                  `;
+                  divMobile.appendChild(card);
+              });
+          }).catch(err => {
+              console.log("Error loading logs: ", err);
+          });
+    }
+
+    // ✨ ປັບປຸງ: ເພີ່ມລະບົບກັ່ນຕອງຄົ້ນຫາໃນໜ້າສະຕັອກສິນຄ້າ
     function renderStockPage() {
         const tbodyPC = document.getElementById('stockTableBodyPC'); tbodyPC.innerHTML = '';
         const divMobile = document.getElementById('stockCardsMobile'); divMobile.innerHTML = '';
+        const query = document.getElementById('searchStockInput').value.toLowerCase().trim();
 
         for (let id in localProducts) {
             let p = localProducts[id]; 
+            
+            // ຖ້າມີການພິມຄົ້ນຫາ ແລ້ວຊື່ບໍ່ກົງ ໃຫ້ຂ້າມໄປ
+            if (query && !p.name.toLowerCase().includes(query)) continue;
+
             let rowClass = '';
             if (p.stock <= 0) rowClass = 'out-of-stock';
             else if (p.stock <= p.threshold) rowClass = 'low-stock';
             
-            // --- ເວີຊັ່ນ PC (Table) ---
             let tr = document.createElement('tr'); if (rowClass) tr.className = rowClass;
             tr.innerHTML = `
-                <td><span style="font-size:11px; background:#e2e8f0; color:#475569; padding:4px 8px; border-radius:6px; font-weight:600;">${p.cat}</span></td>
+                <td><span style="font-size:11px; background:#e2e8f0; color:#475569; padding:4px 8px; border-radius:6px; font-weight:600;">${getCatLabel(p.cat)}</span></td>
                 <td><strong style="color:#334155;">${p.name}</strong></td>
                 <td><span class="inline-stock-label">${p.stock}</span> <span style="color:#64748b; font-size:13px;">${p.unit}</span></td>
                 <td>
@@ -381,12 +488,11 @@
             `;
             tbodyPC.appendChild(tr);
 
-            // --- ເວີຊັ່ນ ມືຖື (Cards) ---
             let card = document.createElement('div'); card.className = `card-item ${rowClass}`;
             card.innerHTML = `
                 <div class="card-header-flex">
                     <div>
-                        <span style="font-size:11px; background:#e2e8f0; color:#475569; padding:3px 6px; border-radius:6px; font-weight:600; margin-right:5px;">${p.cat}</span>
+                        <span style="font-size:11px; background:#e2e8f0; color:#475569; padding:3px 6px; border-radius:6px; font-weight:600; margin-right:5px;">${getCatLabel(p.cat)}</span>
                         <strong style="color:#1e293b;">${p.name}</strong>
                     </div>
                     <button class="btn btn-danger" onclick="deleteProduct('${id}')" style="padding:4px 8px; font-size:11px;">🗑️ ລຶບ</button>
@@ -406,11 +512,8 @@
     function executeAddStock(id, inputId) {
         let currentStock = localProducts[id].stock;
         let addQty = parseInt(document.getElementById(inputId).value);
-
-        if (isNaN(addQty) || addQty <= 0) return alert("ກະລຸນາປ້ອນຕົວເລກສະຕັອກທີ່ຈະເພີ່ມໃຫ້ຖືກຕ້ອງ");
-
-        let newStock = currentStock + addQty;
-        db.collection("products").doc(id).update({ stock: newStock }).then(() => {
+        if (isNaN(addQty) || addQty <= 0) return alert("ກະລຸນາປ້ອນຕົວເລກໃຫ້ຖືກຕ້ອງ");
+        db.collection("products").doc(id).update({ stock: currentStock + addQty }).then(() => {
             document.getElementById(inputId).value = "10";
         });
     }
@@ -426,7 +529,89 @@
         });
     }
     
-    function deleteProduct(id) { if(confirm("ຕ້ອງການລຶບສິນຄ້ານີ້ແທ້ບໍ່?")) { db.collection("products").doc(id).delete(); } }
+    function deleteProduct(id) { if(confirm("ต้องการลบสินค้านี้ใช่ไหม?")) { db.collection("products").doc(id).delete(); } }
+
+    function seedGoogleSheetData() {
+        if(!confirm("ต้องการรีเซ็ตและอัปโหลดวัตถุดิบใหม่ทั้งหมดใช่ไหม?")) return;
+        
+        const sheetItems = [
+            { name: "ເມັດກາເຟ", cat: "dry", stock: 500, unit: "g", threshold: 100 },
+            { name: "ຜົງນົມ", cat: "dry", stock: 1000, unit: "ຫໍ່", threshold: 2 },
+            { name: "ຜົງໂກໂກ້", cat: "dry", stock: 440, unit: "ຫໍ່", threshold: 1 },
+            { name: "ໂໂຣິໂອ້", cat: "dry", stock: 3, unit: "ອັນ", threshold: 1 },
+            { name: "ມັດຊະ m", cat: "dry", stock: 100, unit: "g", threshold: 20 },
+            { name: "ມັດຊະ p", cat: "dry", stock: 35, unit: "g", threshold: 10 },
+            { name: "ຊາກຸຫຼາບ", cat: "dry", stock: 100, unit: "ຫໍ່", threshold: 1 },
+            { name: "ຊາຽວເຂົາຊ່ອງ", cat: "dry", stock: 20, unit: "ຫໍ່", threshold: 2 },
+            { name: "ຊາຂຽວ", cat: "dry", stock: 200, unit: "g", threshold: 50 },
+            { name: "ຊາຊ້ອນ", cat: "dry", stock: 10, unit: "ຫໍ່", threshold: 2 },
+            { name: "ຜົງ Spirulina", cat: "dry", stock: 30, unit: "ກ່ອງ", threshold: 5 },
+            { name: "ນ້ຳຕານຊາຍ", cat: "dry", stock: 1000, unit: "ຫໍ່", threshold: 100 },
+            { name: "ນ້ຳຕານໄອຊິ່ງ", cat: "dry", stock: 900, unit: "ຫໍ່", threshold: 100 },
+            { name: "ນົມອາວມອນ", cat: "wet", stock: 180, unit: "ຕຸກ", threshold: 20 },
+            { name: "ນົມໂໂ໊ດ", cat: "wet", stock: 1000, unit: "ຕຸກ", threshold: 100 },
+            { name: "ເມຈິ", cat: "wet", stock: 2000, unit: "ຕຸກ", threshold: 200 },
+            { name: "ຄະເນຊັ້ນ", cat: "wet", stock: 385, unit: "ປ໋ອງ", threshold: 30 },
+            { name: "ນົມຂົ້ນ", cat: "wet", stock: 2000, unit: "ຖົງ", threshold: 200 },
+            { name: "ນົມປະສົມ", cat: "wet", stock: 800, unit: "ຊຸດ", threshold: 100 },
+            { name: "ໂໂຢເກິດ", cat: "wet", stock: 2000, unit: "ຖ້ວຍ", threshold: 200 },
+            { name: "ໂໂໂຊດາ", cat: "wet", stock: 325, unit: "ແກ้ວ", threshold: 24 },
+            { name: "ນ້ຳດື່ມ", cat: "wet", stock: 1, unit: "ຕຸກ", threshold: 1 },
+            { name: "ມິວແລັກ", cat: "wet", stock: 1000, unit: "ຕຸກ", threshold: 100 },
+            { name: "ນ້ຳເຜີ້ງ", cat: "wet", stock: 1000, unit: "ຕຸກ", threshold: 100 },
+            { name: "ຄາຣາເມລ", cat: "wet", stock: 740, unit: "ຕຸກ", threshold: 50 },
+            { name: "ວານິລາໄຊຣັບ", cat: "wet", stock: 740, unit: "ຕຸກ", threshold: 50 },
+            { name: "ນ້ຳເຊື່ອມ", cat: "wet", stock: 1150, unit: "ຊຸດ", threshold: 100 },
+            { name: "ນ້ຳເຊື່ອມບລູເບີຣີ", cat: "wet", stock: 750, unit: "ແກ້ວ", threshold: 50 },
+            { name: "ນ້ຳເຊື່ອມສະຕໍເບີຣີ", cat: "wet", stock: 750, unit: "ແກ້ວ", threshold: 50 },
+            { name: "ນ້ຳເຊື່ອມໝາກມ່ວງ", cat: "wet", stock: 750, unit: "ແກ້ວ", threshold: 50 },
+            { name: "ນ້ຳເຊື່ອມຊີສເຄັກ", cat: "wet", stock: 700, unit: "ແກ້ວ", threshold: 50 },
+            { name: "ນ້ຳເຊື່ອມທິຣາມິສຸ", cat: "wet", stock: 700, unit: "ແກ້ວ", threshold: 50 },
+            { name: "ນ້ຳໝາກພ້າວສົດ", cat: "fresh", stock: 1500, unit: "ຕຸກ", threshold: 200 },
+            { name: "ໝາກມັງກອນສົດ", cat: "fresh", stock: 1, unit: "ໜ່ວຍ", threshold: 1 },
+            { name: "ໝາກແອບເປິ້ນສົດ", cat: "fresh", stock: 1, unit: "ໜ່ວຍ", threshold: 1 },
+            { name: "ອາໂວຄาໂດສົດ", cat: "fresh", stock: 1, unit: "ໜ່ວຍ", threshold: 1 },
+            { name: "ໝາກມ່ວງສົດ", cat: "fresh", stock: 1, unit: "ໜ່ວຍ", threshold: 1 },
+            { name: "ໝາກກ້ຽງສົດ", cat: "fresh", stock: 1, unit: "ໜ່ວຍ", threshold: 1 },
+            { name: "ໝາກພ້າວແຊ່ແຂງ", cat: "fresh", stock: 100, unit: "ຫໍ່", threshold: 10 },
+            { name: "ອາໂວຄาໂດແຊ່ແຂງ", cat: "fresh", stock: 100, unit: "ຫໍ່", threshold: 10 },
+            { name: "ໝາກມ່ວງແຊ່ແຂງ", cat: "fresh", stock: 100, unit: "ຫໍ່", threshold: 10 },
+            { name: "ໝາກກ້ວຍແຊ່ແຂງ", cat: "fresh", stock: 100, unit: "ຫໍ່", threshold: 10 },
+            { name: "ສະຕໍເບີຣີແຊ່ແຂງ", cat: "fresh", stock: 1000, unit: "ຫໍ່", threshold: 100 },
+            { name: "ໝາກນາວ", cat: "fresh", stock: 1000, unit: "kg", threshold: 1 },
+            { name: "ແຢມບລູເບີຣີ", cat: "fresh", stock: 590, unit: "ປ໋ອງ", threshold: 50 },
+            { name: "ໃບໄມ້ແຕ່ງ", cat: "fresh", stock: 60, unit: "ຫໍ່", threshold: 5 },
+            { name: "ຝາໂດມ", cat: "pkg", stock: 50, unit: "ຫໍ່", threshold: 5 },
+            { name: "ຝາຍົກດື່ມ", cat: "pkg", stock: 50, unit: "ຫໍ່", threshold: 5 },
+            { name: "ຈອກຍາງ", cat: "pkg", stock: 50, unit: "ໜ່ວຍ", threshold: 10 },
+            { name: "ຈອກຊ້ອນ", cat: "pkg", stock: 25, unit: "ໜ່ວຍ", threshold: 5 },
+            { name: "ຈອກກີບດອກ", cat: "pkg", stock: 50, unit: "ໜ່ວຍ", threshold: 10 },
+            { name: "ກ່ອງເຄັກປ່ຽງ", cat: "pkg", stock: 50, unit: "ຫໍ່", threshold: 5 },
+            { name: "ທິດຊູ່ພັບ", cat: "pkg", stock: 4, unit: "ແພັກ", threshold: 1 },
+            { name: "ທິດຊູ່ທ້ອງນ້ຳ", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
+            { name: "ທິດຊູ່ທໍ່ຈອກ", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
+            { name: "ທິດຊູ່ແຂງ", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
+            { name: "ຖົງ 6*14", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
+            { name: "ຖົງ 12*20", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
+            { name: "ຖົງ 8*16", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
+            { name: "ຖົງຈອກດ່ຽວ", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
+            { name: "ຖົງ 2 ຈອກ", cat: "pkg", stock: 50, unit: "ແພັກ", threshold: 5 },
+            { name: "ຖົງຄิວອານ", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
+            { name: "ບ່ວງເຄັກ", cat: "pkg", stock: 100, unit: "ແພັກ", threshold: 10 },
+            { name: "ບ່ວງອາຫານ", cat: "pkg", stock: 50, unit: "ແພັກ", threshold: 5 },
+            { name: "ໂບ", cat: "pkg", stock: 1, unit: "ກໍ້", threshold: 1 }
+        ];
+
+        let count = 0;
+        sheetItems.forEach(item => {
+            db.collection("products").add(item).then(() => {
+                count++;
+                if(count === sheetItems.length) {
+                    alert("🎉 สำเร็จแล้ว! ข้อมูลจัดหมวดหมู่ใหม่ทั้งหมดวิ่งขึ้น Cloud เรียบร้อยแล้วครับ");
+                }
+            });
+        });
+    }
 
     function renderChart() {
         const ctx = document.getElementById('analyticsChart').getContext('2d'); let labels = []; let stockData = [];
@@ -444,6 +629,15 @@
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`page-${pageId}`).classList.add('active');
         document.getElementById(`btn-${pageId}`).classList.add('active');
+        
+        if(pageId === 'logbook') {
+            fetchLogbook();
+            if(window.innerWidth <= 768) {
+                document.getElementById('logCardsMobile').style.display = 'flex';
+            } else {
+                document.getElementById('logCardsMobile').style.display = 'none';
+            }
+        }
         if(pageId === 'dash') setTimeout(renderChart, 200);
     }
 </script>
