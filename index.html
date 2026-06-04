@@ -50,7 +50,7 @@
         .login-box input { width: 100%; padding: 14px; margin: 10px 0 15px 0; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 15px; outline: none; }
         .login-box button { width: 100%; padding: 14px; background: var(--success); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
         
-        /* ✨ ກ່ອງຄົ້ນຫາສິນຄ້າ */
+        /* ກ່ອງຄົ້ນຫາສິນຄ້າ */
         .search-container { position: relative; margin-bottom: 15px; }
         .search-input { width: 100%; padding: 12px 16px 12px 40px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 14px; background-color: #f8fafc; outline: none; transition: all 0.2s; }
         .search-input:focus { background-color: #fff; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
@@ -83,8 +83,6 @@
         .btn-add-stock { background: var(--blue); color: white; padding: 8px 14px; }
         .btn-danger { background: #fff1f2; color: var(--danger); border: 1px solid #ffe4e6; padding: 8px 12px; }
         
-        .btn-purple { background: var(--purple); color: white; width: 100%; padding: 16px; font-size: 15px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25); border: none; cursor: pointer; font-weight: bold; }
-        
         .user-status { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 15px; border-radius: 12px; margin-bottom: 15px; font-size: 12px; color: #475569; border: 1px solid var(--border-color); }
         .form-group { background: #f8fafc; padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--border-color); }
         .form-group input, .form-group select { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-size: 14px; }
@@ -108,7 +106,7 @@
 <body>
 
 <div id="loginPage" class="login-box">
-    <h2 style="text-align:center; margin-bottom:20px; color: var(--primary);">🔐 ເຂົ້າສູ່ລະບົບ</h2>
+    <h2 style="text-align:center; margin-bottom:20px; color: var(--primary);">🔐 ເົ້າສູ່ລະບົບ</h2>
     <input type="email" id="loginEmail" placeholder="ອີເມວຜູ້ໃຊ້">
     <input type="password" id="loginPassword" placeholder="ລະຫັດຜ່ານ">
     <button onclick="handleLogin()">Sign In</button>
@@ -120,8 +118,6 @@
         <span>👤 ຜູ້ໃຊ້: <strong><span id="userDisplay">...</span></strong> (<span id="roleDisplay" style="color:var(--success);">...</span>)</span>
         <span style="color:var(--danger); font-weight:600; cursor:pointer;" onclick="handleLogout()">Logout 🚪</span>
     </div>
-    
-    <button class="btn-purple" onclick="seedGoogleSheetData()">🚀 ກົດປຸ່ມນີ້ບາດດຽו ເພື່ອອັບໂຫລດວັດຖຸດິບແຍກ 4 ໝວດໃໝ່ ຈາກ Google Sheet</button>
 
     <div class="nav-tabs">
         <button class="nav-btn active" id="btn-use-page" onclick="switchPage('use-page')">💻 ໜ້າຮ້ານ POS / ກົດໃຊ້</button>
@@ -141,7 +137,6 @@
             <button class="sub-btn" id="sub-btn-pkg" onclick="filterUseCategory('pkg')">📦 4. ອຸປະກອນ Packaging</button>
         </div>
 
-        <!-- ✨ ເພີ່ມຊ່ອງ Search ໜ້າ POS -->
         <div class="search-container">
             <span class="search-icon">🔍</span>
             <input type="text" id="searchUseInput" class="search-input" placeholder="ພິມຊື່ອັດຖຸດິບທີ່ຕ້ອງການຄົ້ນຫາໃນໝວດນີ້..." oninput="renderUsePage()">
@@ -168,7 +163,6 @@
     <div id="page-stock" class="page">
         <h3>📋 ລາຍການວັດຖຸດິບທັງໝົດໃນລະບົບ Cloud</h3>
         
-        <!-- ✨ ເພີ່ມຊ່ອງ Search ໜ້າສະຕັອກ (ຄົ້ນຫາໄດ້ທຸກໝວດພ້ອມກັນ) -->
         <div class="search-container" style="margin-top: 15px;">
             <span class="search-icon">🔍</span>
             <input type="text" id="searchStockInput" class="search-input" placeholder="ຄົ້ນຫາຊື່ວັດຖຸດິບທັງໝົດໃນສະຕັອກ..." oninput="renderStockPage()">
@@ -179,7 +173,7 @@
                 <thead>
                     <tr>
                         <th>👑 ໝວດ</th>
-                        <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
+                        <th>ชື່ວັດຖຸດິບ / ສິນຄ້າ</th>
                         <th>ສະຕັອກຄົງເຫຼືອ</th>
                         <th>⚡ ເພີ່ມສະຕັອກດ່ວນ</th>
                         <th>ເກນເຕືອນ</th>
@@ -193,7 +187,7 @@
         
         <div class="form-group" id="ownerForm">
             <h3 style="margin-bottom:12px;">➕ ເພີ່ມສິນຄ້າ / ວັດຖຸດິບໃໝ່</h3>
-            <input type="text" id="prodName" placeholder="ຊື່ສິນຄ້າ ຫຼື ວັດຖຸດິບ">
+            <input type="text" id="prodName" placeholder="ชື່ສິນຄ້າ ຫຼື ວັດຖຸດິບ">
             <select id="prodCat">
                 <option value="dry">🍂 ວັດຖຸດິບແຫ້ງ</option>
                 <option value="wet">🥛 ວັດຖຸດິບປຽກ</option>
@@ -296,7 +290,7 @@
         currentUseCategory = catName;
         document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
         document.getElementById(`sub-btn-${catName}`).classList.add('active');
-        document.getElementById('searchUseInput').value = ''; // Reset ຄຳຄົ້ນຫາເວລາປ່ຽນໝວດ
+        document.getElementById('searchUseInput').value = ''; 
         renderUsePage();
     }
 
@@ -308,7 +302,6 @@
         return cat;
     }
 
-    // ✨ ປັບປຸງ: ເພີ່ມລະບົບກັ່ນຕອງຄົ້ນຫາໃນໜ້າກົດໃຊ້
     function renderUsePage() {
         const tbodyPC = document.getElementById('useTableBodyPC'); tbodyPC.innerHTML = '';
         const divMobile = document.getElementById('useCardsMobile'); divMobile.innerHTML = '';
@@ -319,7 +312,6 @@
             let p = localProducts[id]; 
             if (p.cat !== currentUseCategory) continue;
             
-            // ຖ້າມີການພິມຄົ້ນຫາ ແລ້ວຊື່ບໍ່ກົງ ໃຫ້ຂ້າມໄປ
             if (query && !p.name.toLowerCase().includes(query)) continue;
             hasItem = true;
 
@@ -369,7 +361,7 @@
 
         if(!hasItem) {
             tbodyPC.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px;">📭 ບໍ່ມີລາຍການສິນຄ້າທີ່ກົງກັບຄຳຄົ້ນຫາ</td></tr>`;
-            divMobile.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:30px; font-size:14px; width:100%;">📭 ບໍ່ມີລາຍການສິນຄ້າທີ່ກົງກັບຄຳຄົ້ນຫາ</div>`;
+            divMobile.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:30px; font-size:14px; width:100%;">📭 ບໍ່ມີລายການສິນຄ້າທີ່ກົງກັບຄຳຄົ້ນຫາ</div>`;
         }
     }
 
@@ -456,7 +448,6 @@
           });
     }
 
-    // ✨ ປັບປຸງ: ເພີ່ມລະບົບກັ່ນຕອງຄົ້ນຫາໃນໜ້າສະຕັອກສິນຄ້າ
     function renderStockPage() {
         const tbodyPC = document.getElementById('stockTableBodyPC'); tbodyPC.innerHTML = '';
         const divMobile = document.getElementById('stockCardsMobile'); divMobile.innerHTML = '';
@@ -465,7 +456,6 @@
         for (let id in localProducts) {
             let p = localProducts[id]; 
             
-            // ຖ້າມີການພິມຄົ້ນຫາ ແລ້ວຊື່ບໍ່ກົງ ໃຫ້ຂ້າມໄປ
             if (query && !p.name.toLowerCase().includes(query)) continue;
 
             let rowClass = '';
@@ -530,88 +520,6 @@
     }
     
     function deleteProduct(id) { if(confirm("ต้องการลบสินค้านี้ใช่ไหม?")) { db.collection("products").doc(id).delete(); } }
-
-    function seedGoogleSheetData() {
-        if(!confirm("ต้องการรีเซ็ตและอัปโหลดวัตถุดิบใหม่ทั้งหมดใช่ไหม?")) return;
-        
-        const sheetItems = [
-            { name: "ເມັດກາເຟ", cat: "dry", stock: 500, unit: "g", threshold: 100 },
-            { name: "ຜົງນົມ", cat: "dry", stock: 1000, unit: "ຫໍ່", threshold: 2 },
-            { name: "ຜົງໂກໂກ້", cat: "dry", stock: 440, unit: "ຫໍ່", threshold: 1 },
-            { name: "ໂໂຣິໂອ້", cat: "dry", stock: 3, unit: "ອັນ", threshold: 1 },
-            { name: "ມັດຊະ m", cat: "dry", stock: 100, unit: "g", threshold: 20 },
-            { name: "ມັດຊະ p", cat: "dry", stock: 35, unit: "g", threshold: 10 },
-            { name: "ຊາກຸຫຼາບ", cat: "dry", stock: 100, unit: "ຫໍ່", threshold: 1 },
-            { name: "ຊາຽວເຂົາຊ່ອງ", cat: "dry", stock: 20, unit: "ຫໍ່", threshold: 2 },
-            { name: "ຊາຂຽວ", cat: "dry", stock: 200, unit: "g", threshold: 50 },
-            { name: "ຊາຊ້ອນ", cat: "dry", stock: 10, unit: "ຫໍ່", threshold: 2 },
-            { name: "ຜົງ Spirulina", cat: "dry", stock: 30, unit: "ກ່ອງ", threshold: 5 },
-            { name: "ນ້ຳຕານຊາຍ", cat: "dry", stock: 1000, unit: "ຫໍ່", threshold: 100 },
-            { name: "ນ້ຳຕານໄອຊິ່ງ", cat: "dry", stock: 900, unit: "ຫໍ່", threshold: 100 },
-            { name: "ນົມອາວມອນ", cat: "wet", stock: 180, unit: "ຕຸກ", threshold: 20 },
-            { name: "ນົມໂໂ໊ດ", cat: "wet", stock: 1000, unit: "ຕຸກ", threshold: 100 },
-            { name: "ເມຈິ", cat: "wet", stock: 2000, unit: "ຕຸກ", threshold: 200 },
-            { name: "ຄະເນຊັ້ນ", cat: "wet", stock: 385, unit: "ປ໋ອງ", threshold: 30 },
-            { name: "ນົມຂົ້ນ", cat: "wet", stock: 2000, unit: "ຖົງ", threshold: 200 },
-            { name: "ນົມປະສົມ", cat: "wet", stock: 800, unit: "ຊຸດ", threshold: 100 },
-            { name: "ໂໂຢເກິດ", cat: "wet", stock: 2000, unit: "ຖ້ວຍ", threshold: 200 },
-            { name: "ໂໂໂຊດາ", cat: "wet", stock: 325, unit: "ແກ้ວ", threshold: 24 },
-            { name: "ນ້ຳດື່ມ", cat: "wet", stock: 1, unit: "ຕຸກ", threshold: 1 },
-            { name: "ມິວແລັກ", cat: "wet", stock: 1000, unit: "ຕຸກ", threshold: 100 },
-            { name: "ນ້ຳເຜີ້ງ", cat: "wet", stock: 1000, unit: "ຕຸກ", threshold: 100 },
-            { name: "ຄາຣາເມລ", cat: "wet", stock: 740, unit: "ຕຸກ", threshold: 50 },
-            { name: "ວານິລາໄຊຣັບ", cat: "wet", stock: 740, unit: "ຕຸກ", threshold: 50 },
-            { name: "ນ້ຳເຊື່ອມ", cat: "wet", stock: 1150, unit: "ຊຸດ", threshold: 100 },
-            { name: "ນ້ຳເຊື່ອມບລູເບີຣີ", cat: "wet", stock: 750, unit: "ແກ້ວ", threshold: 50 },
-            { name: "ນ້ຳເຊື່ອມສະຕໍເບີຣີ", cat: "wet", stock: 750, unit: "ແກ້ວ", threshold: 50 },
-            { name: "ນ້ຳເຊື່ອມໝາກມ່ວງ", cat: "wet", stock: 750, unit: "ແກ້ວ", threshold: 50 },
-            { name: "ນ້ຳເຊື່ອມຊີສເຄັກ", cat: "wet", stock: 700, unit: "ແກ້ວ", threshold: 50 },
-            { name: "ນ້ຳເຊື່ອມທິຣາມິສຸ", cat: "wet", stock: 700, unit: "ແກ້ວ", threshold: 50 },
-            { name: "ນ້ຳໝາກພ້າວສົດ", cat: "fresh", stock: 1500, unit: "ຕຸກ", threshold: 200 },
-            { name: "ໝາກມັງກອນສົດ", cat: "fresh", stock: 1, unit: "ໜ່ວຍ", threshold: 1 },
-            { name: "ໝາກແອບເປິ້ນສົດ", cat: "fresh", stock: 1, unit: "ໜ່ວຍ", threshold: 1 },
-            { name: "ອາໂວຄาໂດສົດ", cat: "fresh", stock: 1, unit: "ໜ່ວຍ", threshold: 1 },
-            { name: "ໝາກມ່ວງສົດ", cat: "fresh", stock: 1, unit: "ໜ່ວຍ", threshold: 1 },
-            { name: "ໝາກກ້ຽງສົດ", cat: "fresh", stock: 1, unit: "ໜ່ວຍ", threshold: 1 },
-            { name: "ໝາກພ້າວແຊ່ແຂງ", cat: "fresh", stock: 100, unit: "ຫໍ່", threshold: 10 },
-            { name: "ອາໂວຄาໂດແຊ່ແຂງ", cat: "fresh", stock: 100, unit: "ຫໍ່", threshold: 10 },
-            { name: "ໝາກມ່ວງແຊ່ແຂງ", cat: "fresh", stock: 100, unit: "ຫໍ່", threshold: 10 },
-            { name: "ໝາກກ້ວຍແຊ່ແຂງ", cat: "fresh", stock: 100, unit: "ຫໍ່", threshold: 10 },
-            { name: "ສະຕໍເບີຣີແຊ່ແຂງ", cat: "fresh", stock: 1000, unit: "ຫໍ່", threshold: 100 },
-            { name: "ໝາກນາວ", cat: "fresh", stock: 1000, unit: "kg", threshold: 1 },
-            { name: "ແຢມບລູເບີຣີ", cat: "fresh", stock: 590, unit: "ປ໋ອງ", threshold: 50 },
-            { name: "ໃບໄມ້ແຕ່ງ", cat: "fresh", stock: 60, unit: "ຫໍ່", threshold: 5 },
-            { name: "ຝາໂດມ", cat: "pkg", stock: 50, unit: "ຫໍ່", threshold: 5 },
-            { name: "ຝາຍົກດື່ມ", cat: "pkg", stock: 50, unit: "ຫໍ່", threshold: 5 },
-            { name: "ຈອກຍາງ", cat: "pkg", stock: 50, unit: "ໜ່ວຍ", threshold: 10 },
-            { name: "ຈອກຊ້ອນ", cat: "pkg", stock: 25, unit: "ໜ່ວຍ", threshold: 5 },
-            { name: "ຈອກກີບດອກ", cat: "pkg", stock: 50, unit: "ໜ່ວຍ", threshold: 10 },
-            { name: "ກ່ອງເຄັກປ່ຽງ", cat: "pkg", stock: 50, unit: "ຫໍ່", threshold: 5 },
-            { name: "ທິດຊູ່ພັບ", cat: "pkg", stock: 4, unit: "ແພັກ", threshold: 1 },
-            { name: "ທິດຊູ່ທ້ອງນ້ຳ", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
-            { name: "ທິດຊູ່ທໍ່ຈອກ", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
-            { name: "ທິດຊູ່ແຂງ", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
-            { name: "ຖົງ 6*14", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
-            { name: "ຖົງ 12*20", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
-            { name: "ຖົງ 8*16", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
-            { name: "ຖົງຈອກດ່ຽວ", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
-            { name: "ຖົງ 2 ຈອກ", cat: "pkg", stock: 50, unit: "ແພັກ", threshold: 5 },
-            { name: "ຖົງຄิວອານ", cat: "pkg", stock: 1, unit: "ແພັກ", threshold: 1 },
-            { name: "ບ່ວງເຄັກ", cat: "pkg", stock: 100, unit: "ແພັກ", threshold: 10 },
-            { name: "ບ່ວງອາຫານ", cat: "pkg", stock: 50, unit: "ແພັກ", threshold: 5 },
-            { name: "ໂບ", cat: "pkg", stock: 1, unit: "ກໍ້", threshold: 1 }
-        ];
-
-        let count = 0;
-        sheetItems.forEach(item => {
-            db.collection("products").add(item).then(() => {
-                count++;
-                if(count === sheetItems.length) {
-                    alert("🎉 สำเร็จแล้ว! ข้อมูลจัดหมวดหมู่ใหม่ทั้งหมดวิ่งขึ้น Cloud เรียบร้อยแล้วครับ");
-                }
-            });
-        });
-    }
 
     function renderChart() {
         const ctx = document.getElementById('analyticsChart').getContext('2d'); let labels = []; let stockData = [];
