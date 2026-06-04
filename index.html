@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 ລະບົບ Inventory Cloud Management</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --orange: #f97316;
+            --orange-hover: #ea580c;
+            --bg-body: #f8fafc;
+            --text-main: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; font-family: 'Noto Sans Lao', sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding: 30px 20px; display: flex; justify-content: center; }
+        
+        .container { max-width: 1050px; width: 100%; background: white; padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.05); }
+        h1 { text-align: center; margin-bottom: 25px; color: var(--primary); font-weight: 700; font-size: 26px; }
+        h3 { font-weight: 600; color: #334155; font-size: 18px; margin-bottom: 5px; }
+
+        /* ປຸ່ມເມນູຫຼັກ (Main Tabs) */
+        .nav-tabs { display: flex; gap: 12px; margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 12px; }
+        .nav-btn { flex: 1; padding: 14px; border: none; background: #f1f5f9; color: #64748b; font-weight: 600; border-radius: 10px; cursor: pointer; font-size: 14px; transition: all 0.2s ease; }
+        .nav-btn:hover { background: #e2e8f0; color: #334155; }
+        .nav-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(44, 62, 80, 0.2); }
+        
+        /* ປຸ່ມເມນູຍ່ອຍ (Sub Tabs) */
+        .sub-tabs { display: flex; gap: 10px; margin: 20px 0; background: #f1f5f9; padding: 6px; border-radius: 12px; }
+        .sub-btn { flex: 1; padding: 10px 16px; border: none; background: transparent; color: #64748b; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 13px; transition: all 0.2s ease; }
+        .sub-btn:hover { color: #1e293b; background: rgba(255,255,255,0.5); }
+        .sub-btn.active { background: white; color: var(--orange); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+
+        .page { display: none; }
+        .page.active { display: block; }
+        
+        /* ຟອມເຂົ້າສູ່ລະບົບ */
+        .login-box { max-width: 400px; margin: 60px auto; padding: 30px; border-radius: 16px; background: white; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: 1px solid var(--border-color); }
+        .login-box input { width: 100%; padding: 12px; margin: 10px 0 15px 0; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; outline: none; transition: all 0.2s; }
+        .login-box input:focus { border-color: var(--success); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+        .login-box button { width: 100%; padding: 12px; background: var(--success); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; transition: background 0.2s; }
+        .login-box button:hover { background: #059669; }
+        
+        /* ຕາຕະລາງ (Table) */
+        .stock-table { width: 100%; border-collapse: collapse; margin-top: 10px; border-radius: 8px; overflow: hidden; }
+        .stock-table th, .stock-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 14px; }
+        .stock-table th { background-color: #f8fafc; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        .stock-table tbody tr { transition: background-color 0.2s; }
+        .stock-table tbody tr:hover { background-color: #f8fafc; }
+        
+        /* ສະຖານະແຍກຕາມສີ */
+        .low-stock { background-color: #fffbeb; }
+        .low-stock:hover { background-color: #fef3c7 !important; }
+        .out-of-stock { background-color: #fef2f2; }
+        .out-of-stock:hover { background-color: #fee2e2 !important; }
+        
+        /* ປ້າຍສະຖານະ (Badges) */
+        .badge { padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+        .badge-success { background-color: #d1fae5; color: #065f46; }
+        .badge-warning { background-color: #fef3c7; color: #92400e; }
+        .badge-danger { background-color: #fee2e2; color: #991b1b; }
+        
+        /* ປຸ່ມທົ່ວໄປ (Buttons) */
+        .btn { padding: 8px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
+        .btn-use { background: var(--orange); color: white; padding: 10px 18px; font-size: 13px; box-shadow: 0 2px 4px rgba(249, 115, 22, 0.15); }
+        .btn-use:hover { background: var(--orange-hover); box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3); }
+        .btn-danger { background: #fff1f2; color: var(--danger); border: 1px solid #ffe4e6; }
+        .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2); }
+        
+        .user-status { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 20px; border-radius: 12px; margin-bottom: 20px; font-size: 13px; color: #475569; border: 1px solid var(--border-color); }
+        .form-group { background: #f8fafc; padding: 20px; border-radius: 12px; margin-top: 30px; border: 1px solid var(--border-color); }
+        .form-group input, .form-group select { width: 100%; padding: 10px 12px; margin: 8px 0 16px 0; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-size: 14px; outline: none; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary); }
+        
+        .action-flex { display: flex; align-items: center; gap: 8px; }
+        .use-input-box { width: 65px; padding: 8px; text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; font-size: 14px; outline: none; }
+        .inline-stock-input { width: 75px; padding: 6px 8px; border-radius: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: 600; font-size: 14px; }
+        .inline-stock-input:focus { border-color: var(--primary); background: #f8fafc; }
+    </style>
+</head>
+<body>
+
+<div id="loginPage" class="login-box">
+    <h2 style="text-align:center; margin-bottom:20px; color: var(--primary);">🔐 ເຂົ້າສູ່ລະບົບ</h2>
+    <input type="email" id="loginEmail" placeholder="ອີເມວຜູ້ໃຊ້">
+    <input type="password" id="loginPassword" placeholder="ລະຫັດຜ່ານ">
+    <button onclick="handleLogin()">Sign In</button>
+</div>
+
+<div id="mainApp" class="container" style="display: none;">
+    <h1>📦 ລະບົບ Inventory Cloud</h1>
+    <div class="user-status">
+        <span>👤 ຜູ້ໃຊ້: <strong style="color:#1e293b;"><span id="userDisplay">...</span></strong> (<span id="roleDisplay" style="color:var(--success);">...</span>)</span>
+        <span style="color:var(--danger); font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;" onclick="handleLogout()">Logout 🚪</span>
+    </div>
+    
+    <div class="nav-tabs">
+        <button class="nav-btn active" id="btn-use-page" onclick="switchPage('use-page')">📉 ກົດໃຊ້ວັດຖຸດິບ</button>
+        <button class="nav-btn" id="btn-stock" onclick="switchPage('stock')">📦 ສະຕັອກສິນຄ້າ (ເພີ່ມ/ແກ້ໄຂ)</button>
+        <button class="nav-btn" id="btn-dash" onclick="switchPage('dash')">📊 Dashboard ສະຖິຕິ</button>
+    </div>
+
+    <div id="page-use-page" class="page active">
+        <h3>📉 ບັນທຶກການນຳໃຊ້ວັດຖຸດິບ ແລະ ສິນຄ້າ</h3>
+        <p style="color: #64748b; font-size: 13px;">ເລືອກໝວດໝູ່ດ້ານລຸ່ມ ແລ້ວປ້ອນຈຳນວນເພື່ອຫັກສະຕັອກ</p>
+        
+        <div class="sub-tabs">
+            <button class="sub-btn active" id="sub-btn-ນ້ຳ" onclick="filterUseCategory('ນ້ຳ')">💧 1. ໝວດນ້ຳ</button>
+            <button class="sub-btn" id="sub-btn-ອາຫານ" onclick="filterUseCategory('ອາຫານ')">🍔 2. ໝວດອາຫານ</button>
+            <button class="sub-btn" id="sub-btn-ເຄັກ" onclick="filterUseCategory('ເຄັກ')">🍰 3. ໝວດເຄັກ</button>
+        </div>
+
+        <table class="stock-table">
+            <thead>
+                <tr>
+                    <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
+                    <th>ສະຕັອກເຫຼືອ</th>
+                    <th>ສະຖານະ</th>
+                    <th>ຈຳນວນທີ່ໃຊ້</th>
+                    <th>ການກະທຳ</th>
+                </tr>
+            </thead>
+            <tbody id="useTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="page-stock" class="page">
+        <h3>📋 ລາຍການສະຕັອກສິນຄ້າທັງໝົດໃນ Cloud</h3>
+        <table class="stock-table">
+            <thead>
+                <tr>
+                    <th>ໝວດ</th>
+                    <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
+                    <th>ສະຕັອກຄົງເຫຼືອ (ພິມແກ້ໄຂໄດ້)</th>
+                    <th>ເກນເຕືອນ</th>
+                    <th>ຈັດການ</th>
+                </tr>
+            </thead>
+            <tbody id="stockTableBody"></tbody>
+        </table>
+        
+        <div class="form-group" id="ownerForm">
+            <h3 style="margin-bottom:15px;">➕ ເພີ່ມສິນຄ້າ / ວັດຖຸດິບໃໝ່</h3>
+            <input type="text" id="prodName" placeholder="ຊື່ສິນຄ້າ ຫຼື ຊື່ວັດຖຸດິບ">
+            <select id="prodCat">
+                <option value="ນ້ຳ">💧 ໝວດ: ນ້ຳ</option>
+                <option value="ອາຫານ">🍔 ໝວດ: ອາຫານ</option>
+                <option value="ເຄັກ">🍰 ໝວດ: ເຄັກ</option>
+            </select>
+            <input type="number" id="prodStock" placeholder="ສະຕັອກເລີ່ມຕົ້ນ">
+            <input type="text" id="prodUnit" placeholder="ຫົວໜ່ວຍ (ເຊັ່ນ: ແກ້ວ, ຕ່ອນ, ຖົງ, ກິໂລ)">
+            <input type="number" id="prodThreshold" placeholder="ເກນເຕືອນຕ່ຳ (ເຕືອນເມື່ອສິນຄ້າເຫຼືອຕ່ຳກວ່າ ຫຼື ເທົ່າກັບເທົ່ານີ້)">
+            <button class="btn btn-success" style="width:100%; padding:12px; font-size:14px;" onclick="addNewProduct()">✨ ບັນທຶກລົງລະບົບ Cloud</button>
+        </div>
+    </div>
+
+    <div id="page-dash" class="page">
+        <h3>📊 ສະຖິຕິສະຕັອກຄົງເຫຼືອ</h3><br>
+        <div style="width: 100%; height: 380px;"><canvas id="analyticsChart"></canvas></div>
+    </div>
+</div>
+
+<script>
+    // ========================================================
+    // ⚙️ ຂໍ້ມູນ Firebase Config ຂອງ Niicha Stock
+    // ========================================================
+    const firebaseConfig = {
+        apiKey: "AIzaSyAEVdN1IpNbbN43yHUtNHC2s9K435LXlnA",
+        authDomain: "niicha-stock.firebaseapp.com",
+        projectId: "niicha-stock",
+        storageBucket: "niicha-stock.firebasestorage.app",
+        messagingSenderId: "1077404537823",
+        appId: "1:1077404537823:web:865815bf5316c6f8bd6a6a",
+        measurementId: "G-RWS5XPLL0D"
+    };
+    
+    const TELEGRAM_BOT_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN";
+    const TELEGRAM_CHAT_ID = "YOUR_TELEGRAM_CHAT_ID_OR_GROUP_ID";
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let localProducts = {}; let currentRole = "owner"; let myChart = null;
+    let currentUseCategory = "ນ້ຳ";
+
+    function handleLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const pass = document.getElementById('loginPassword').value;
+        auth.signInWithEmailAndPassword(email, pass).catch(err => alert("Error: " + err.message));
+    }
+    function handleLogout() { auth.signOut(); }
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+            document.getElementById('userDisplay').innerText = user.email;
+            currentRole = "owner";
+            document.getElementById('roleDisplay').innerText = "MANAGER";
+            listenToCloudData();
+        } else {
+            document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+        }
+    });
+
+    function listenToCloudData() {
+        db.collection("products").onSnapshot(snapshot => {
+            localProducts = {};
+            snapshot.forEach(doc => { localProducts[doc.id] = doc.data(); });
+            renderUsePage(); renderStockPage(); renderChart();
+        });
+    }
+
+    function sendTelegramAlert(productName, currentStock, unit) {
+        if(TELEGRAM_BOT_TOKEN.includes("YOUR_")) return;
+        const message = `⚠️ [Niicha Stock ຕ່ຳ]\nສິນຄ້າ: ${productName}\nເຫຼືອ: ${currentStock} ${unit}`;
+        const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(message)}`;
+        fetch(url).catch(err => console.error(err));
+    }
+
+    function filterUseCategory(catName) {
+        currentUseCategory = catName;
+        document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`sub-btn-${catName}`).classList.add('active');
+        renderUsePage();
+    }
+
+    function renderUsePage() {
+        const tbody = document.getElementById('useTableBody'); tbody.innerHTML = '';
+        let hasItem = false;
+
+        for (let id in localProducts) {
+            let p = localProducts[id]; 
+            if (p.cat !== currentUseCategory) continue;
+            hasItem = true;
+
+            let statusBadge = ''; let rowClass = '';
+            if (p.stock <= 0) {
+                statusBadge = '<span class="badge badge-danger">❌ ໝົດແລ້ວ</span>';
+                rowClass = 'out-of-stock';
+            } else if (p.stock <= p.threshold) {
+                statusBadge = '<span class="badge badge-warning">⚠️ ເຫຼືອໜ້ອຍ</span>';
+                rowClass = 'low-stock';
+            } else {
+                statusBadge = '<span class="badge badge-success">✅ ປົກກະຕິ</span>';
+            }
+
+            let tr = document.createElement('tr'); if (rowClass) tr.className = rowClass;
+            tr.innerHTML = `
+                <td><strong style="color:#334155;">${p.name}</strong></td>
+                <td><span style="font-size:15px; font-weight:600;">${p.stock}</span> <span style="color:#64748b; font-size:13px;">${p.unit}</span></td>
+                <td>${statusBadge}</td>
+                <td>
+                    <div class="action-flex">
+                        <input type="number" id="use-qty-${id}" value="1" min="1" class="use-input-box">
+                        <span style="color:#64748b; font-size:13px;">${p.unit}</span>
+                    </div>
+                </td>
+                <td>
+                    <button class="btn btn-use" onclick="executeUseItem('${id}')" ${p.stock <= 0 ? 'disabled style="background:#cbd5e1; color:#94a3b8; cursor:not-allowed; box-shadow:none;"' : ''}>📉 ຢືນຢັນການໃຊ້</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        if(!hasItem) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px; font-size:14px;">📭 ບໍ່ມີລາຍການສິນຄ້າໃນໝວດນີ້</td></tr>`;
+        }
+    }
+
+    function executeUseItem(id) {
+        let currentStock = localProducts[id].stock;
+        let useInput = document.getElementById(`use-qty-${id}`);
+        let useQty = parseInt(useInput.value);
+
+        if (isNaN(useQty) || useQty <= 0) return alert("ກະລຸນາປ້ອນຈຳນວນທີ່ຈະໃຊ້ໃຫ້ຖືກຕ້ອງ");
+        if (useQty > currentStock) return alert(`ວັດຖຸດິບບໍ່ພໍໃຫ້ຫັກ! ຕອນນີ້ມີເຫຼືອພຽງແຕ່ ${currentStock} ${localProducts[id].unit}`);
+
+        let newStock = currentStock - useQty;
+        db.collection("products").doc(id).update({ stock: newStock }).then(() => {
+            useInput.value = "1";
+            if (newStock <= localProducts[id].threshold) { 
+                sendTelegramAlert(localProducts[id].name, newStock, localProducts[id].unit); 
+            }
+        });
+    }
+
+    function renderStockPage() {
+        const tbody = document.getElementById('stockTableBody'); tbody.innerHTML = '';
+        for (let id in localProducts) {
+            let p = localProducts[id]; 
+            let rowClass = '';
+            if (p.stock <= 0) rowClass = 'out-of-stock';
+            else if (p.stock <= p.threshold) rowClass = 'low-stock';
+            
+            let tr = document.createElement('tr'); if (rowClass) tr.className = rowClass;
+            tr.innerHTML = `
+                <td><span style="font-size:12px; background:#e2e8f0; color:#475569; padding:4px 8px; border-radius:6px; font-weight:600;">${p.cat}</span></td>
+                <td><strong style="color:#334155;">${p.name}</strong></td>
+                <td>
+                    <div class="action-flex">
+                        <input type="number" value="${p.stock}" class="inline-stock-input" onchange="updateStockInline('${id}', this.value)"> 
+                        <span style="color:#64748b; font-size:13px;">${p.unit}</span>
+                    </div>
+                </td>
+                <td><span style="color:#64748b; font-weight:600;">&le; ${p.threshold}</span></td>
+                <td>
+                    <button class="btn btn-danger" onclick="deleteProduct('${id}')">🗑️ ລຶບອອກ</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+    }
+
+    function updateStockInline(id, newStockValue) {
+        const stock = parseInt(newStockValue);
+        if(isNaN(stock) || stock < 0) return alert("ກະລຸນາປ້ອນຕົວເລກສະຕັອກໃຫ້ຖືກຕ້ອງ");
+        db.collection("products").doc(id).update({ stock: stock }).then(() => {
+            if (stock <= localProducts[id].threshold) { 
+                sendTelegramAlert(localProducts[id].name, stock, localProducts[id].unit); 
+            }
+        });
+    }
+
+    function addNewProduct() {
+        const name = document.getElementById('prodName').value; const cat = document.getElementById('prodCat').value;
+        const stock = parseInt(document.getElementById('prodStock').value); const unit = document.getElementById('prodUnit').value;
+        const threshold = parseInt(document.getElementById('prodThreshold').value);
+        if(!name || isNaN(stock)) return alert("ກະລຸນາກອກຂໍ້ມູນໃຫ້ຄົບ");
+        db.collection("products").add({ name: name, cat: cat, stock: stock, unit: unit, threshold: threshold }).then(() => {
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodStock').value = '';
+            document.getElementById('prodUnit').value = '';
+            document.getElementById('prodThreshold').value = '';
+        });
+    }
+    
+    function deleteProduct(id) { if(confirm("ຕ້ອງການລຶບສິນຄ້ານີ້ແທ້ບໍ່? ຂໍ້ມູນໃນ Cloud ຈະຫາຍໄປທັນທີ")) { db.collection("products").doc(id).delete(); } }
+
+    function renderChart() {
+        const ctx = document.getElementById('analyticsChart').getContext('2d'); let labels = []; let stockData = [];
+        for (let id in localProducts) { labels.push(localProducts[id].name); stockData.push(localProducts[id].stock); }
+        if (myChart) myChart.destroy();
+        myChart = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: labels, datasets: [{ label: 'ສະຕັອກຄົງເຫຼືອ', data: stockData, backgroundColor: '#3b82f6', borderRadius: 6 }] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        });
+    }
+    
+    function switchPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`page-${pageId}`).classList.add('active');
+        document.getElementById(`btn-${pageId}`).classList.add('active');
+        if(pageId === 'dash') setTimeout(renderChart, 200);
+    }
+</script>
+</body>
+</html>
