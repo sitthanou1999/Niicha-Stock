@@ -8,6 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -15,7 +16,7 @@
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --orange: #f97316;
+            --mint: #01c7a9;
             --blue: #3b82f6;
             --purple: #8b5cf6;
             --bg-body: #f8fafc;
@@ -40,7 +41,7 @@
         .sub-tabs { display: flex; gap: 6px; margin: 15px 0; background: #f1f5f9; padding: 6px; border-radius: 12px; overflow-x: auto; }
         .sub-tabs::-webkit-scrollbar { display: none; }
         .sub-btn { flex: 1; padding: 10px 10px; border: none; background: transparent; color: #64748b; font-weight: 600; border-radius: 8px; cursor: pointer; font-size: 12px; white-space: nowrap; text-align: center; min-width: 110px; }
-        .sub-btn.active { background: white; color: var(--orange); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
+        .sub-btn.active { background: white; color: var(--mint); box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
 
         .page { display: none; }
         .page.active { display: block; }
@@ -79,9 +80,13 @@
         
         .btn { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-success { background: var(--success); color: white; }
-        .btn-use { background: var(--orange); color: white; width: 100%; padding: 12px; font-size: 14px; }
+        .btn-use { background: var(--mint); color: white; width: 100%; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 8px; transition: background 0.2s; }
+        .btn-use:hover { background: #00b398; }
+        .btn-use:disabled { background: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed !important; box-shadow: none !important; }
         .btn-add-stock { background: var(--blue); color: white; padding: 8px 14px; }
         .btn-danger { background: #fff1f2; color: var(--danger); border: 1px solid #ffe4e6; padding: 8px 12px; }
+        .btn-excel { background: #10b981; color: white; font-size: 13px; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: background 0.2s; border: none; cursor: pointer; }
+        .btn-excel:hover { background: #059669; }
         
         .user-status { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 15px; border-radius: 12px; margin-bottom: 15px; font-size: 12px; color: #475569; border: 1px solid var(--border-color); }
         .form-group { background: #f8fafc; padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--border-color); }
@@ -93,20 +98,23 @@
         .inline-stock-label { font-weight: 700; font-size: 16px; color: #1e293b; }
 
         /* ຕົວເລືອກວັນທີສໍາລັບໜ້າປະຫວັດ */
-        .filter-container { background: #f1f5f9; padding: 15px; border-radius: 12px; display: flex; gap: 10px; align-items: center; margin-bottom: 15px; flex-wrap: wrap; }
-        .filter-container input[type="date"] { padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; font-weight: 600; }
+        .filter-container { background: #f1f5f9; padding: 15px; border-radius: 12px; display: flex; gap: 12px; align-items: center; margin-bottom: 15px; flex-wrap: wrap; justify-content: space-between; border: 1px solid var(--border-color); }
+        .filter-left { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .filter-container input[type="date"] { padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; font-weight: 600; color: #1e293b; outline: none; }
 
         @media (max-width: 768px) {
             .table-responsive { display: none; }
             .mobile-cards { display: flex; }
             .mobile-log-cards { display: flex !important; flex-direction: column; gap: 10px; }
+            .filter-container { flex-direction: column; align-items: stretch; gap: 12px; }
+            .btn-excel { width: 100%; text-align: center; justify-content: center; padding: 12px; }
         }
     </style>
 </head>
 <body>
 
 <div id="loginPage" class="login-box">
-    <h2 style="text-align:center; margin-bottom:20px; color: var(--primary);">🔐 ເົ້າສູ່ລະບົບ</h2>
+    <h2 style="text-align:center; margin-bottom:20px; color: var(--primary);">🔐 ເຂົ້າສູ່ລະບົບ</h2>
     <input type="email" id="loginEmail" placeholder="ອີເມວຜູ້ໃຊ້">
     <input type="password" id="loginPassword" placeholder="ລະຫັດຜ່ານ">
     <button onclick="handleLogin()">Sign In</button>
@@ -126,7 +134,6 @@
         <button class="nav-btn" id="btn-dash" onclick="switchPage('dash')">📊 Dashboard ສະຖິຕິ</button>
     </div>
 
-    <!-- Page 1: ໜ້າກົດໃຊ້ວັດຖຸດິບ -->
     <div id="page-use-page" class="page active">
         <h3>📉 ບັນທຶກການນຳໃຊ້ວັດຖຸດິບ (Real-time)</h3>
         
@@ -146,7 +153,7 @@
             <table class="stock-table">
                 <thead>
                     <tr>
-                        <th>ชື່ວັດຖຸດິບ / ສິນຄ້າ</th>
+                        <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
                         <th>ສະຕັອກເຫຼືອ</th>
                         <th>ສະຖານະ</th>
                         <th>ຈຳນວນທີ່ໃຊ້</th>
@@ -159,7 +166,6 @@
         <div id="useCardsMobile" class="mobile-cards"></div>
     </div>
 
-    <!-- Page 2: ໜ້າສະຕັອກສິນຄ້າ -->
     <div id="page-stock" class="page">
         <h3>📋 ລາຍການວັດຖຸດິບທັງໝົດໃນລະບົບ Cloud</h3>
         
@@ -173,7 +179,7 @@
                 <thead>
                     <tr>
                         <th>👑 ໝວດ</th>
-                        <th>ชື່ວັດຖຸດິບ / ສິນຄ້າ</th>
+                        <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
                         <th>ສະຕັອກຄົງເຫຼືອ</th>
                         <th>⚡ ເພີ່ມສະຕັອກດ່ວນ</th>
                         <th>ເກນເຕືອນ</th>
@@ -187,7 +193,7 @@
         
         <div class="form-group" id="ownerForm">
             <h3 style="margin-bottom:12px;">➕ ເພີ່ມສິນຄ້າ / ວັດຖຸດິບໃໝ່</h3>
-            <input type="text" id="prodName" placeholder="ชື່ສິນຄ້າ ຫຼື ວັດຖຸດິບ">
+            <input type="text" id="prodName" placeholder="ຊື່ສິນຄ້າ ຫຼື ວັດຖຸດິບ">
             <select id="prodCat">
                 <option value="dry">🍂 ວັດຖຸດິບແຫ້ງ</option>
                 <option value="wet">🥛 ວັດຖຸດິບປຽກ</option>
@@ -201,13 +207,15 @@
         </div>
     </div>
 
-    <!-- Page 3: ໜ້າປະຫວັດການໃຊ້ຄືນຫຼັງ (Logbook) -->
     <div id="page-logbook" class="page">
         <h3>📜 ປະຫວັດການນຳໃຊ້ວັດຖຸດິບຄືນຫຼັງ</h3>
         
         <div class="filter-container">
-            <label style="font-weight: 600; font-size: 14px; color: #475569;">📅 ເລືອກວັນທີຕ້ອງການເບິ່ງ:</label>
-            <input type="date" id="searchDate" onchange="fetchLogbook()">
+            <div class="filter-left">
+                <label style="font-weight: 600; font-size: 14px; color: #475569;">📅 ເລືອກວັນທີຕ້ອງການເບິ່ງ:</label>
+                <input type="date" id="searchDate" onchange="fetchLogbook()">
+            </div>
+            <button class="btn btn-excel" onclick="exportLogbookToExcel()">Excel Export 📊</button>
         </div>
 
         <div class="table-responsive">
@@ -215,9 +223,10 @@
                 <thead>
                     <tr style="background:#e2e8f0;">
                         <th>🕒 ເວລາ</th>
-                        <th>👤 ຜູ້ບັນທຶກ</th>
                         <th>📦 ວັດຖຸດິບ</th>
-                        <th>📉 ຈຳນວນທີ່ໃຊ້ໄປ</th>
+                        <th>📉 ຈຳນວນທີ່ໃຊ້</th>
+                        <th>🏪 ສະຕັອກເຫຼືອປັດຈຸບັນ</th>
+                        <th>👤 ຜູ້ບັນທຶກ</th>
                     </tr>
                 </thead>
                 <tbody id="logTableBodyPC"></tbody>
@@ -226,7 +235,6 @@
         <div id="logCardsMobile" class="mobile-log-cards" style="display:none;"></div>
     </div>
 
-    <!-- Page 4: Dashboard -->
     <div id="page-dash" class="page">
         <h3>📊 ສະຖິຕິສະຕັອກຄົງເຫຼືອ</h3><br>
         <div style="width: 100%; height: 320px;"><canvas id="analyticsChart"></canvas></div>
@@ -250,6 +258,7 @@
 
     let localProducts = {}; let myChart = null; let currentUseCategory = "dry";
     let currentUserEmail = "";
+    let currentLogs = []; // ເກັບຂໍ້ມູນ Logbook ຂອງວັນທີທີ່ເລືອກ ເພື່ອໃຊ້ໃນການ Export Excel
 
     window.addEventListener('DOMContentLoaded', () => {
         const today = new Date().toISOString().split('T')[0];
@@ -271,7 +280,6 @@
             document.getElementById('userDisplay').innerText = user.email;
             document.getElementById('roleDisplay').innerText = "MANAGER";
             listenToCloudData();
-            fetchLogbook();
         } else {
             document.getElementById('loginPage').style.display = 'block';
             document.getElementById('mainApp').style.display = 'none';
@@ -283,6 +291,7 @@
             localProducts = {};
             snapshot.forEach(doc => { localProducts[doc.id] = doc.data(); });
             renderUsePage(); renderStockPage(); renderChart();
+            fetchLogbook(); // ໂຫຼດ logbook ໃໝ່ທຸກຄັ້ງທີ່ຄ່າໃນສະຕັອກປ່ຽນແປງ ເພື່ອອັບເດດເລກສະຕັອກຄົງເຫຼືອໃຫ້ເປັນຫຼ້າສຸດ
         });
     }
 
@@ -336,7 +345,7 @@
                     </div>
                 </td>
                 <td>
-                    <button class="btn btn-use" onclick="executeUseItem('${id}')" ${p.stock <= 0 ? 'disabled style="background:#cbd5e1; color:#94a3b8; cursor:not-allowed; box-shadow:none;"' : ''}>📉 ຢືນຢັນການໃຊ້</button>
+                    <button class="btn btn-use" onclick="executeUseItem('${id}')" ${p.stock <= 0 ? 'disabled' : ''}>📉 ຢືນຢັນການໃຊ້</button>
                 </td>
             `;
             tbodyPC.appendChild(tr);
@@ -354,14 +363,14 @@
                         <span style="color:#64748b; font-size:13px;">${p.unit}</span>
                     </div>
                 </div>
-                <button class="btn btn-use" onclick="executeUseItemMobile('${id}')" ${p.stock <= 0 ? 'disabled style="background:#cbd5e1; color:#94a3b8; cursor:not-allowed;"' : ''}>📉 ຢືນຢັນການຫັກສະຕັອກ</button>
+                <button class="btn btn-use" onclick="executeUseItemMobile('${id}')" ${p.stock <= 0 ? 'disabled' : ''}>📉 ຢືນຢັນການຫັກສະຕັອກ</button>
             `;
             divMobile.appendChild(card);
         }
 
         if(!hasItem) {
             tbodyPC.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px;">📭 ບໍ່ມີລາຍການສິນຄ້າທີ່ກົງກັບຄຳຄົ້ນຫາ</td></tr>`;
-            divMobile.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:30px; font-size:14px; width:100%;">📭 ບໍ່ມີລายການສິນຄ້າທີ່ກົງກັບຄຳຄົ້ນຫາ</div>`;
+            divMobile.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:30px; font-size:14px; width:100%;">📭 ບໍ່ມີລາຍການສິນຄ້າທີ່ກົງກັບຄຳຄົ້ນຫາ</div>`;
         }
     }
 
@@ -387,6 +396,7 @@
             document.getElementById(inputId).value = "1";
             
             const logData = {
+                prodId: id, // ເກັບ id ໄວ້ເພື່ອໃຊ້ແລຶງຂໍ້ມູນສະຕັອກປັດຈຸບັນ
                 prodName: pName,
                 qtyUsed: useQty,
                 unit: pUnit,
@@ -408,44 +418,115 @@
 
         db.collection("use_logs")
           .where("dateStr", "==", selectedDate)
-          .orderBy("timestamp", "desc")
           .get()
           .then(snapshot => {
               const tbody = document.getElementById('logTableBodyPC'); tbody.innerHTML = '';
               const divMobile = document.getElementById('logCardsMobile'); divMobile.innerHTML = '';
+              currentLogs = [];
               
               if(snapshot.empty) {
-                  tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; padding:30px;">📅 ບໍ່ມີປະຫວັດການໃຊ້ວັດຖຸດິບໃນວັນທີນີ້</td></tr>`;
+                  tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px;">📅 ບໍ່ມີປະຫວັດການໃຊ້ວັດຖຸດິບໃນວັນທີນີ້</td></tr>`;
                   divMobile.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:20px; font-size:14px;">📅 ບໍ່ມີປະຫວັດການໃຊ້ວັດຖຸດິບໃນວັນທີນີ້</div>`;
                   return;
               }
 
-              snapshot.forEach(doc => {
-                  let log = doc.data();
-                  
+              snapshot.forEach(doc => { currentLogs.push(doc.data()); });
+              
+              // ໃຊ້ JavaScript ລຽງລໍາດັບເວລາຫຼ້າສຸດຂຶ້ນກ່ອນ (Client-side Sorting)
+              currentLogs.sort((a, b) => (b.timeStr || "").localeCompare(a.timeStr || ""));
+
+              currentLogs.forEach(log => {
+                  // ຊອກຫາສະຕັອກຄົງເຫຼືອປັດຈຸບັນຈາກ localProducts
+                  let currentStockText = "ບໍ່ມີຂໍ້ມູນ";
+                  if (log.prodId && localProducts[log.prodId]) {
+                      currentStockText = `${localProducts[log.prodId].stock} ${log.unit}`;
+                  } else {
+                      // ກໍລະນີຫາ Id ບໍ່ເຈິ (ຫຼືສິນຄ້າຖືກລຶບໄປແລ້ວ) ຈະພະຍາຍາມຫາດ້ວຍຊື່
+                      for (let key in localProducts) {
+                          if (localProducts[key].name === log.prodName) {
+                              currentStockText = `${localProducts[key].stock} ${log.unit}`;
+                              break;
+                          }
+                      }
+                  }
+
                   let tr = document.createElement('tr');
                   tr.innerHTML = `
-                      <td style="color:#64748b; font-weight:600;">⏰ ${log.timeStr}</td>
-                      <td style="font-size:13px; color:#475569;">${log.user.split('@')[0]}</td>
+                      <td style="color:#64748b; font-weight:600;">⏰ ${log.timeStr || '--:--'}</td>
                       <td><strong style="color:#1e293b;">${log.prodName}</strong></td>
                       <td><span style="color:var(--danger); font-weight:bold;">-${log.qtyUsed}</span> <small style="color:#64748b;">${log.unit}</small></td>
+                      <td><span style="color:var(--mint); font-weight:bold; font-size:15px;">${currentStockText}</span></td>
+                      <td style="font-size:13px; color:#475569;">${log.user ? log.user.split('@')[0] : 'ບໍ່ລະບຸ'}</td>
                   `;
                   tbody.appendChild(tr);
 
                   let card = document.createElement('div');
-                  card.style = "background:white; border:1px solid var(--border-color); padding:12px; border-radius:10px; display:flex; justify-content:space-between; align-items:center;";
+                  card.style = "background:white; border:1px solid var(--border-color); padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:6px;";
                   card.innerHTML = `
-                      <div>
-                          <strong style="color:#1e293b; font-size:15px;">${log.prodName}</strong><br>
-                          <small style="color:#64748b;">🕒 ເວລາ: ${log.timeStr} | 👤 ໂດຍ: ${log.user.split('@')[0]}</small>
+                      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                          <div>
+                              <strong style="color:#1e293b; font-size:15px;">${log.prodName}</strong><br>
+                              <small style="color:#64748b;">🕒 ເວລາ: ${log.timeStr || '--:--'} | 👤 ໂດຍ: ${log.user ? log.user.split('@')[0] : 'ບໍ່ລະບຸ'}</small>
+                          </div>
+                          <div style="color:var(--danger); font-weight:bold; font-size:16px;">-${log.qtyUsed} ${log.unit}</div>
                       </div>
-                      <div style="color:var(--danger); font-weight:bold; font-size:16px;">-${log.qtyUsed} ${log.unit}</div>
+                      <div style="border-top:1px dashed #f1f5f9; padding-top:6px; font-size:13px; display:flex; justify-content:space-between;">
+                          <span style="color:#64748b;">📦 ສະຕັອກເຫຼືອປັດຈຸບັນ:</span>
+                          <strong style="color:var(--mint);">${currentStockText}</strong>
+                      </div>
                   `;
                   divMobile.appendChild(card);
+                  
+                  // ບັນທຶກສະຕັອກຄົງເຫຼືອເຂົ້າໃນ log object ເພື່ອໃຊ້ Export Excel
+                  log.currentStockStr = currentStockText;
               });
           }).catch(err => {
               console.log("Error loading logs: ", err);
           });
+    }
+
+    // ຟັງຊັນສຳລັບ Export ເປັນໄຟລ໌ Excel 📊
+    function exportLogbookToExcel() {
+        if (currentLogs.length === 0) {
+            alert("❌ ບໍ່ມີຂໍ້ມູນປະຫວັດໃນວັນທີນີ້ ເພື່ອສົ່ງອອກເປັນ Excel");
+            return;
+        }
+
+        const selectedDate = document.getElementById('searchDate').value;
+        
+        // ຈັດຮູບແບບຂໍ້ມູນທີ່ຈະໃສ່ໃນ Excel
+        const excelData = currentLogs.map((log, index) => ({
+            "ລຳດັບ": index + 1,
+            "ວັນທີ": log.dateStr,
+            "ເວລາ": log.timeStr || "--:--",
+            "ຊື່ວັດຖຸດິບ / ສິນຄ້າ": log.prodName,
+            "ຈຳນວນທີໃຊ້": log.qtyUsed,
+            "ຫົວໜ່ວຍ": log.unit,
+            "ສະຕັອກເຫຼືອປັດຈຸບັນ": log.currentStockStr || "ບໍ່ມີຂໍ້ມູນ",
+            "ຜູ້ບັນທຶກ": log.user ? log.user.split('@')[0] : 'ບໍ່ລະບຸ'
+        }));
+
+        // ສ້າງ Worksheet ແລະ Workbook ດ້ວຍ SheetJS
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Logbook");
+
+        // ກຳນົດຄວາມກວ້າງຂອງ Column ອັດຕະໂນມັດ
+        const max_widths = [
+            { wch: 6 },  // ລຳດັບ
+            { wch: 12 }, // ວັນທີ
+            { wch: 10 }, // ເວລາ
+            { wch: 25 }, // ຊື່ວັດຖຸດິບ
+            { wch: 12 }, // ຈຳນວນ
+            { wch: 10 }, // ຫົວໜ່ວຍ
+            { wch: 20 }, // ສະຕັອກເຫຼືອປັດຈຸບັນ
+            { wch: 18 }  // ຜູ້ບັນທຶກ
+        ];
+        worksheet['!cols'] = max_widths;
+
+        // ດາວໂຫຼດໄຟລ໌ອອກມາ
+        const fileName = `Niicha_Logbook_${selectedDate}.xlsx`;
+        XLSX.writeFile(workbook, fileName);
     }
 
     function renderStockPage() {
@@ -519,7 +600,7 @@
         });
     }
     
-    function deleteProduct(id) { if(confirm("ต้องการลบสินค้านี้ใช่ไหม?")) { db.collection("products").doc(id).delete(); } }
+    function deleteProduct(id) { if(confirm("ຕ້ອງການລຶບສິນຄ້ານີ້ແມ່ນບໍ່?")) { db.collection("products").doc(id).delete(); } }
 
     function renderChart() {
         const ctx = document.getElementById('analyticsChart').getContext('2d'); let labels = []; let stockData = [];
@@ -527,7 +608,7 @@
         if (myChart) myChart.destroy();
         myChart = new Chart(ctx, {
             type: 'bar',
-            data: { labels: labels, datasets: [{ label: 'ສະຕັອກຄົງເຫຼືອ', data: stockData, backgroundColor: '#3b82f6', borderRadius: 6 }] },
+            data: { labels: labels, datasets: [{ label: 'ສະຕັອກຄົງເຫຼືອ', data: stockData, backgroundColor: '#01c7a9', borderRadius: 6 }] },
             options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
         });
     }
