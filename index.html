@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🚀 ລະບົບ POS & Inventory Cloud - Niichá HomeCafe</title>
+    <title>🚀 ລະບົບ Inventory & Stock Take Cloud - Niichá HomeCafe</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -19,6 +19,7 @@
             --mint: #01c7a9;
             --blue: #3b82f6;
             --purple: #8b5cf6;
+            --orange: #f97316;
             --bg-body: #f8fafc;
             --text-main: #1e293b;
             --border-color: #e2e8f0;
@@ -80,7 +81,7 @@
         
         .btn { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-success { background: var(--success); color: white; }
-        .btn-use { background: var(--mint); color: white; width: 100%; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 8px; transition: background 0.2s; }
+        .btn-use { background: var(--mint); color: white; width: 100%; padding: 12px; font-size: 14px; font-weight: 600; border-radius: 8px; transition: background 0.2s; box-shadow: 0 2px 4px rgba(1, 199, 169, 0.2); }
         .btn-use:hover { background: #00b398; }
         .btn-use:disabled { background: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed !important; box-shadow: none !important; }
         .btn-add-stock { background: var(--blue); color: white; padding: 8px 14px; }
@@ -93,7 +94,8 @@
         .form-group input, .form-group select { width: 100%; padding: 12px; margin: 6px 0 12px 0; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-size: 14px; }
         
         .action-flex { display: flex; align-items: center; gap: 8px; }
-        .use-input-box { width: 75px; padding: 10px; text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; font-size: 15px; }
+        .use-input-box { width: 90px; padding: 10px; text-align: center; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700; font-size: 15px; color: #1e293b; background: #fff; }
+        .use-input-box:focus { border-color: var(--mint); outline: none; box-shadow: 0 0 0 3px rgba(1, 199, 169, 0.15); }
         .add-stock-input { width: 75px; padding: 8px; border-radius: 8px; border: 1px solid #cbd5e1; text-align: center; font-weight: 600; font-size: 14px; }
         .inline-stock-label { font-weight: 700; font-size: 16px; color: #1e293b; }
 
@@ -121,21 +123,21 @@
 </div>
 
 <div id="mainApp" class="container" style="display: none;">
-    <h1>🏢 ລະບົບ POS & Inventory Cloud</h1>
+    <h1>🏢 ລະບົບ Inventory & Stock Take Cloud</h1>
     <div class="user-status">
         <span>👤 ຜູ້ໃຊ້: <strong><span id="userDisplay">...</span></strong> (<span id="roleDisplay" style="color:var(--success);">...</span>)</span>
         <span style="color:var(--danger); font-weight:600; cursor:pointer;" onclick="handleLogout()">Logout 🚪</span>
     </div>
 
     <div class="nav-tabs">
-        <button class="nav-btn active" id="btn-use-page" onclick="switchPage('use-page')">💻 ໜ້າຮ້ານ POS / ກົດໃຊ້</button>
+        <button class="nav-btn active" id="btn-use-page" onclick="switchPage('use-page')">📑 ໜ້າກວດນັບວັດຖຸດິບຕົວຈິງ</button>
         <button class="nav-btn" id="btn-stock" onclick="switchPage('stock')">📦 ສະຕັອກສິນຄ້າ (ເພີ່ມ/ແກ້ໄຂ)</button>
-        <button class="nav-btn" id="btn-logbook" onclick="switchPage('logbook')">📜 ປະຫວັດການໃຊ້ (Logbook)</button>
+        <button class="nav-btn" id="btn-logbook" onclick="switchPage('logbook')">📜 ປະຫວັດການກວດນັບ (Logbook)</button>
         <button class="nav-btn" id="btn-dash" onclick="switchPage('dash')">📊 Dashboard ສະຖິຕິ</button>
     </div>
 
     <div id="page-use-page" class="page active">
-        <h3>📉 ບັນທຶກການນຳໃຊ້ວັດຖຸດິບ (Real-time)</h3>
+        <h3>📝 ບັນທຶກຍອດວັດຖຸດິບຄົງເຫຼືອຕົວຈິງໃນຮ້ານ (Real-time Audit)</h3>
         
         <div class="sub-tabs">
             <button class="sub-btn active" id="sub-btn-dry" onclick="filterUseCategory('dry')">🍂 1. ວັດຖຸດິບແຫ້ງ</button>
@@ -154,9 +156,9 @@
                 <thead>
                     <tr>
                         <th>ຊື່ວັດຖຸດິບ / ສິນຄ້າ</th>
-                        <th>ສະຕັອກເຫຼືອ</th>
-                        <th>ສະຖານະ</th>
-                        <th>ຈຳນວນທີ່ໃຊ້</th>
+                        <th>ສະຕັອກໃນລະບົບເກົ່າ</th>
+                        <th>ສະຖານະປັດຈຸບັນ</th>
+                        <th>📦 ເຫຼືອຕົວຈິງຕອນກວດ</th>
                         <th>ການກະທຳ</th>
                     </tr>
                 </thead>
@@ -208,7 +210,7 @@
     </div>
 
     <div id="page-logbook" class="page">
-        <h3>📜 ປະຫວັດການນຳໃຊ້ວັດຖຸດິບຄືນຫຼັງ</h3>
+        <h3>📜 ປະຫວັດການກວດນັບຍອດວັດຖຸດິບຄືນຫຼັງ</h3>
         
         <div class="filter-container">
             <div class="filter-left">
@@ -224,9 +226,10 @@
                     <tr style="background:#e2e8f0;">
                         <th>🕒 ເວລາ</th>
                         <th>📦 ວັດຖຸດິບ</th>
-                        <th>📉 ຈຳນວນທີ່ໃຊ້</th>
-                        <th>🏪 ສະຕັອກເຫຼືອປັດຈຸບັນ</th>
-                        <th>👤 ຜູ້ບັນທຶກ</th>
+                        <th>⏳ ສະຕັອກກ່ອນກວດ</th>
+                        <th>🏪 ຍອດຕົວຈິງທີ່ນັບໄດ້</th>
+                        <th>📉 ໃຊ້ໄປ</th>
+                        <th>👤 ຜູ້ກວດນັບ</th>
                     </tr>
                 </thead>
                 <tbody id="logTableBodyPC"></tbody>
@@ -236,7 +239,7 @@
     </div>
 
     <div id="page-dash" class="page">
-        <h3>📊 ສະຖິຕິສະຕັອກຄົງເຫຼືອ</h3><br>
+        <h3>📊 ສະຖິຕິສະຕັອກຄົງເຫຼືອປັດຈຸບັນ</h3><br>
         <div style="width: 100%; height: 320px;"><canvas id="analyticsChart"></canvas></div>
     </div>
 </div>
@@ -258,7 +261,7 @@
 
     let localProducts = {}; let myChart = null; let currentUseCategory = "dry";
     let currentUserEmail = "";
-    let currentLogs = []; // ເກັບຂໍ້ມູນ Logbook ຂອງວັນທີທີ່ເລືອກ ເພື່ອໃຊ້ໃນການ Export Excel
+    let currentLogs = [];
 
     window.addEventListener('DOMContentLoaded', () => {
         const today = new Date().toISOString().split('T')[0];
@@ -291,7 +294,7 @@
             localProducts = {};
             snapshot.forEach(doc => { localProducts[doc.id] = doc.data(); });
             renderUsePage(); renderStockPage(); renderChart();
-            fetchLogbook(); // ໂຫຼດ logbook ໃໝ່ທຸກຄັ້ງທີ່ຄ່າໃນສະຕັອກປ່ຽນແປງ ເພື່ອອັບເດດເລກສະຕັອກຄົງເຫຼືອໃຫ້ເປັນຫຼ້າສຸດ
+            fetchLogbook();
         });
     }
 
@@ -336,16 +339,16 @@
             let tr = document.createElement('tr'); if (rowClass) tr.className = rowClass;
             tr.innerHTML = `
                 <td><strong style="color:#334155;">${p.name}</strong></td>
-                <td><span style="font-size:15px; font-weight:600;">${p.stock}</span> <span style="color:#64748b; font-size:13px;">${p.unit}</span></td>
+                <td><span style="font-size:15px; font-weight:600; color:#64748b;">${p.stock}</span> <span style="color:#94a3b8; font-size:13px;">${p.unit}</span></td>
                 <td>${statusBadge}</td>
                 <td>
                     <div class="action-flex">
-                        <input type="number" id="use-qty-${id}" value="1" min="1" class="use-input-box">
-                        <span style="color:#64748b; font-size:13px;">${p.unit}</span>
+                        <input type="number" id="audit-qty-${id}" value="${p.stock}" min="0" class="use-input-box">
+                        <span style="color:#475569; font-size:13px; font-weight:600;">${p.unit}</span>
                     </div>
                 </td>
                 <td>
-                    <button class="btn btn-use" onclick="executeUseItem('${id}')" ${p.stock <= 0 ? 'disabled' : ''}>📉 ຢືນຢັນການໃຊ້</button>
+                    <button class="btn btn-use" onclick="executeAuditItem('${id}')">💾 บันทึกผลກວດ</button>
                 </td>
             `;
             tbodyPC.appendChild(tr);
@@ -357,13 +360,14 @@
                     <div>${statusBadge}</div>
                 </div>
                 <div class="card-body-flex">
-                    <div>ສະຕັອກເຫຼືອ: <span class="inline-stock-label">${p.stock}</span> ${p.unit}</div>
+                    <div>ຍອດເກົ່າ: <span style="font-weight:600; color:#64748b;">${p.stock}</span> ${p.unit}</div>
                     <div class="action-flex">
-                        <input type="number" id="use-qty-mob-${id}" value="1" min="1" class="use-input-box">
-                        <span style="color:#64748b; font-size:13px;">${p.unit}</span>
+                        <span style="font-size:12px; color:#475569;">ນັບໄດ້ຈິງ:</span>
+                        <input type="number" id="audit-qty-mob-${id}" value="${p.stock}" min="0" class="use-input-box">
+                        <span style="color:#475569; font-size:13px; font-weight:600;">${p.unit}</span>
                     </div>
                 </div>
-                <button class="btn btn-use" onclick="executeUseItemMobile('${id}')" ${p.stock <= 0 ? 'disabled' : ''}>📉 ຢືນຢັນການຫັກສະຕັອກ</button>
+                <button class="btn btn-use" onclick="executeAuditItemMobile('${id}')">💾 ບັນທຶກຜົນກວດ</button>
             `;
             divMobile.appendChild(card);
         }
@@ -374,31 +378,31 @@
         }
     }
 
-    function executeUseItem(id) {
-        let currentStock = localProducts[id].stock;
-        let useQty = parseInt(document.getElementById(`use-qty-${id}`).value);
-        saveUseData(id, localProducts[id].name, currentStock, useQty, `use-qty-${id}`, localProducts[id].unit);
+    function executeAuditItem(id) {
+        let actualQty = parseInt(document.getElementById(`audit-qty-${id}`).value);
+        let oldStock = localProducts[id].stock;
+        saveAuditData(id, localProducts[id].name, oldStock, actualQty, localProducts[id].unit);
     }
-    function executeUseItemMobile(id) {
-        let currentStock = localProducts[id].stock;
-        let useQty = parseInt(document.getElementById(`use-qty-mob-${id}`).value);
-        saveUseData(id, localProducts[id].name, currentStock, useQty, `use-qty-mob-${id}`, localProducts[id].unit);
+    function executeAuditItemMobile(id) {
+        let actualQty = parseInt(document.getElementById(`audit-qty-mob-${id}`).value);
+        let oldStock = localProducts[id].stock;
+        saveAuditData(id, localProducts[id].name, oldStock, actualQty, localProducts[id].unit);
     }
 
-    function saveUseData(id, pName, currentStock, useQty, inputId, pUnit) {
-        if (isNaN(useQty) || useQty <= 0) return alert("ກະລຸນາປ້ອນຈຳນວນໃຫ້ຖືກຕ້ອງ");
-        if (useQty > currentStock) return alert(`ເຄື່ອງບໍ່ພໍໃຫ້ຫັກ! ເຫຼືອພຽງແຕ່ ${currentStock}`);
+    function saveAuditData(id, pName, oldStock, actualQty, pUnit) {
+        if (isNaN(actualQty) || actualQty < 0) return alert("ກະລຸນາປ້ອນຈຳນວນໃຫ້ຖືກຕ້ອງ (ຕ້ອງບໍ່ຕ່ຳກວ່າ 0)");
         
-        let newStock = currentStock - useQty;
         const now = new Date();
+        let usedQty = oldStock - actualQty; // ຄິດໄລ່ຍອດທີ່ໃຊ້ໄປ
         
-        db.collection("products").doc(id).update({ stock: newStock }).then(() => {
-            document.getElementById(inputId).value = "1";
-            
+        // ອັບເດດຄ່າໃໝ່ແທນທີ່ຄ່າເກົ່າ
+        db.collection("products").doc(id).update({ stock: actualQty }).then(() => {
             const logData = {
-                prodId: id, // ເກັບ id ໄວ້ເພື່ອໃຊ້ແລຶງຂໍ້ມູນສະຕັອກປັດຈຸບັນ
+                prodId: id,
                 prodName: pName,
-                qtyUsed: useQty,
+                qtyBefore: oldStock,   // ສະຕັອກກ່ອນກວດ
+                qtyActual: actualQty,  // ຍອດຕົວຈິງທີ່ນັບໄດ້
+                qtyUsed: usedQty,      // ຍອດທີ່ໃຊ້ໄປ
                 unit: pUnit,
                 user: currentUserEmail,
                 dateStr: now.toISOString().split('T')[0],
@@ -408,6 +412,7 @@
             
             return db.collection("use_logs").add(logData);
         }).then(() => {
+            alert(`💾 ບັນທຶກຜົນກວດນັບ "${pName}" ເປັນ ${actualQty} ${pUnit} ສຳເລັດແລ້ວ`);
             fetchLogbook();
         }).catch(err => alert("ເກີດຂໍ້ຜິດພາດ: " + err.message));
     }
@@ -425,38 +430,27 @@
               currentLogs = [];
               
               if(snapshot.empty) {
-                  tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:30px;">📅 ບໍ່ມີປະຫວັດການໃຊ້ວັດຖຸດິບໃນວັນທີນີ້</td></tr>`;
-                  divMobile.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:20px; font-size:14px;">📅 ບໍ່ມີປະຫວັດການໃຊ້ວັດຖຸດິບໃນວັນທີນີ້</div>`;
+                  tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8; padding:30px;">📅 ບໍ່ມີປະຫວັດການກວດນັບວັດຖຸດິບໃນວັນທີນີ້</td></tr>`;
+                  divMobile.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:20px; font-size:14px;">📅 ບໍ່ມີປະຫວັດການກວດນັບວັດຖຸດິບໃນວັນທີນີ້</div>`;
                   return;
               }
 
               snapshot.forEach(doc => { currentLogs.push(doc.data()); });
-              
-              // ໃຊ້ JavaScript ລຽງລໍາດັບເວລາຫຼ້າສຸດຂຶ້ນກ່ອນ (Client-side Sorting)
               currentLogs.sort((a, b) => (b.timeStr || "").localeCompare(a.timeStr || ""));
 
               currentLogs.forEach(log => {
-                  // ຊອກຫາສະຕັອກຄົງເຫຼືອປັດຈຸບັນຈາກ localProducts
-                  let currentStockText = "ບໍ່ມີຂໍ້ມູນ";
-                  if (log.prodId && localProducts[log.prodId]) {
-                      currentStockText = `${localProducts[log.prodId].stock} ${log.unit}`;
-                  } else {
-                      // ກໍລະນີຫາ Id ບໍ່ເຈິ (ຫຼືສິນຄ້າຖືກລຶບໄປແລ້ວ) ຈະພະຍາຍາມຫາດ້ວຍຊື່
-                      for (let key in localProducts) {
-                          if (localProducts[key].name === log.prodName) {
-                              currentStockText = `${localProducts[key].stock} ${log.unit}`;
-                              break;
-                          }
-                      }
-                  }
+                  let beforeQty = log.qtyBefore !== undefined ? `${log.qtyBefore} ${log.unit}` : `0 ${log.unit}`;
+                  let displayQty = log.qtyActual !== undefined ? `${log.qtyActual} ${log.unit}` : `0 ${log.unit}`;
+                  let usedQty = log.qtyUsed !== undefined ? `${log.qtyUsed} ${log.unit}` : `0 ${log.unit}`;
 
                   let tr = document.createElement('tr');
                   tr.innerHTML = `
                       <td style="color:#64748b; font-weight:600;">⏰ ${log.timeStr || '--:--'}</td>
                       <td><strong style="color:#1e293b;">${log.prodName}</strong></td>
-                      <td><span style="color:var(--danger); font-weight:bold;">-${log.qtyUsed}</span> <small style="color:#64748b;">${log.unit}</small></td>
-                      <td><span style="color:var(--mint); font-weight:bold; font-size:15px;">${currentStockText}</span></td>
-                      <td style="font-size:13px; color:#475569;">${log.user ? log.user.split('@')[0] : 'ບໍ່ລະບຸ'}</td>
+                      <td><span style="color:#64748b; font-weight:600;">${beforeQty}</span></td>
+                      <td><span style="color:var(--mint); font-weight:bold; font-size:14px;">${displayQty}</span></td>
+                      <td><span style="color:var(--orange); font-weight:bold; font-size:14px;">${usedQty}</span></td>
+                      <td style="font-size:13px; color:#475569;">👤 ${log.user ? log.user.split('@')[0] : 'ບໍ່ລະບຸ'}</td>
                   `;
                   tbody.appendChild(tr);
 
@@ -468,24 +462,23 @@
                               <strong style="color:#1e293b; font-size:15px;">${log.prodName}</strong><br>
                               <small style="color:#64748b;">🕒 ເວລາ: ${log.timeStr || '--:--'} | 👤 ໂດຍ: ${log.user ? log.user.split('@')[0] : 'ບໍ່ລະບຸ'}</small>
                           </div>
-                          <div style="color:var(--danger); font-weight:bold; font-size:16px;">-${log.qtyUsed} ${log.unit}</div>
+                          <div style="color:var(--mint); font-weight:bold; font-size:15px; text-align:right;">
+                             ນັບໄດ້: ${displayQty}<br>
+                             <span style="color:var(--orange); font-size:12px;">📉 ໃຊ້ໄປ: ${usedQty}</span>
+                          </div>
                       </div>
-                      <div style="border-top:1px dashed #f1f5f9; padding-top:6px; font-size:13px; display:flex; justify-content:space-between;">
-                          <span style="color:#64748b;">📦 ສະຕັອກເຫຼືອປັດຈຸບັນ:</span>
-                          <strong style="color:var(--mint);">${currentStockText}</strong>
+                      <div style="border-top:1px dashed #f1f5f9; padding-top:6px; font-size:12px; display:flex; justify-content:space-between; color:#64748b;">
+                          <span>📦 ສະຕັອກກ່ອນກວດ:</span>
+                          <span style="font-weight:600;">${beforeQty}</span>
                       </div>
                   `;
                   divMobile.appendChild(card);
-                  
-                  // ບັນທຶກສະຕັອກຄົງເຫຼືອເຂົ້າໃນ log object ເພື່ອໃຊ້ Export Excel
-                  log.currentStockStr = currentStockText;
               });
           }).catch(err => {
               console.log("Error loading logs: ", err);
           });
     }
 
-    // ຟັງຊັນສຳລັບ Export ເປັນໄຟລ໌ Excel 📊
     function exportLogbookToExcel() {
         if (currentLogs.length === 0) {
             alert("❌ ບໍ່ມີຂໍ້ມູນປະຫວັດໃນວັນທີນີ້ ເພື່ອສົ່ງອອກເປັນ Excel");
@@ -494,38 +487,36 @@
 
         const selectedDate = document.getElementById('searchDate').value;
         
-        // ຈັດຮູບແບບຂໍ້ມູນທີ່ຈະໃສ່ໃນ Excel
         const excelData = currentLogs.map((log, index) => ({
             "ລຳດັບ": index + 1,
             "ວັນທີ": log.dateStr,
             "ເວລາ": log.timeStr || "--:--",
             "ຊື່ວັດຖຸດິບ / ສິນຄ້າ": log.prodName,
-            "ຈຳນວນທີໃຊ້": log.qtyUsed,
+            "ສະຕັອກກ່ອນກວດ": log.qtyBefore !== undefined ? log.qtyBefore : 0,
+            "ຍອດຕົວຈິງທີ່ນັບໄດ້": log.qtyActual !== undefined ? log.qtyActual : 0,
+            "ໃຊ້ໄປ": log.qtyUsed !== undefined ? log.qtyUsed : 0,
             "ຫົວໜ່ວຍ": log.unit,
-            "ສະຕັອກເຫຼືອປັດຈຸບັນ": log.currentStockStr || "ບໍ່ມີຂໍ້ມູນ",
-            "ຜູ້ບັນທຶກ": log.user ? log.user.split('@')[0] : 'ບໍ່ລະບຸ'
+            "ຜູ້ກວດນັບ": log.user ? log.user.split('@')[0] : 'ບໍ່ລະບຸ'
         }));
 
-        // ສ້າງ Worksheet ແລະ Workbook ດ້ວຍ SheetJS
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Logbook");
+        XLSX.utils.book_append_sheet(workbook, worksheet, "StockTake_Log");
 
-        // ກຳນົດຄວາມກວ້າງຂອງ Column ອັດຕະໂນມັດ
         const max_widths = [
-            { wch: 6 },  // ລຳດັບ
-            { wch: 12 }, // ວັນທີ
-            { wch: 10 }, // ເວລາ
-            { wch: 25 }, // ຊື່ວັດຖຸດິບ
-            { wch: 12 }, // ຈຳນວນ
-            { wch: 10 }, // ຫົວໜ່ວຍ
-            { wch: 20 }, // ສະຕັອກເຫຼືອປັດຈຸບັນ
-            { wch: 18 }  // ຜູ້ບັນທຶກ
+            { wch: 6 },  
+            { wch: 12 }, 
+            { wch: 10 }, 
+            { wch: 25 }, 
+            { wch: 16 }, 
+            { wch: 18 }, 
+            { wch: 12 }, 
+            { wch: 10 }, 
+            { wch: 18 }  
         ];
         worksheet['!cols'] = max_widths;
 
-        // ດາວໂຫຼດໄຟລ໌ອອກມາ
-        const fileName = `Niicha_Logbook_${selectedDate}.xlsx`;
+        const fileName = `Niicha_StockTake_${selectedDate}.xlsx`;
         XLSX.writeFile(workbook, fileName);
     }
 
@@ -536,7 +527,6 @@
 
         for (let id in localProducts) {
             let p = localProducts[id]; 
-            
             if (query && !p.name.toLowerCase().includes(query)) continue;
 
             let rowClass = '';
@@ -608,7 +598,7 @@
         if (myChart) myChart.destroy();
         myChart = new Chart(ctx, {
             type: 'bar',
-            data: { labels: labels, datasets: [{ label: 'ສະຕັອກຄົງເຫຼືອ', data: stockData, backgroundColor: '#01c7a9', borderRadius: 6 }] },
+            data: { labels: labels, datasets: [{ label: 'ສະຕັອກຄົງເຫຼືອປັດຈຸບັນ', data: stockData, backgroundColor: '#01c7a9', borderRadius: 6 }] },
             options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
         });
     }
